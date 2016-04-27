@@ -74,7 +74,7 @@ public class PathfindingTest {
         long dTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
-        List<Node> astar = Pathfinder.greedyBestFirst(nodes, start, end );
+        List<Node> astar = Pathfinder.bestFirst(nodes, start, end );
         endTime = System.currentTimeMillis();
         long gbfTime = (endTime - startTime);
         
