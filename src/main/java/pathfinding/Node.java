@@ -2,11 +2,11 @@ package pathfinding;
 
 public class Node {
     public Vertex location;
-    public boolean visited;
-    public double finalCost = -1;
-    public boolean traversable = true;
+    public double cost = -1;
     public boolean origin = false;
     public boolean target = false;
+    public boolean traversable = true;
+    public boolean visited;
     public boolean clear = false;
     public boolean path = false;
 
@@ -23,11 +23,4 @@ public class Node {
         this.origin = origin;
         this.target = target;
     }
-
-//    public void setCost( double graphCost, double heurCost, double finalCost ){
-//        this.graphCost = graphCost;
-//        this.heurCost = heurCost;
-//        this.finalCost = finalCost;
-//    }
-    
 }

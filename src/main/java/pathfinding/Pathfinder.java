@@ -16,7 +16,7 @@ public class Pathfinder
         Node startNode = nodes[origin.y][origin.x];
         startNode.origin = true;
         startNode.visited = true;
-        startNode.finalCost = 0;
+        startNode.cost = 0;
 
         Node targetNode = nodes[target.y][target.x];
         targetNode.target = true;
@@ -26,20 +26,20 @@ public class Pathfinder
         while( currentNode != null ) {
             List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
             for( Node adjacentNode : adjacent ) {
-                double currentCost = currentNode.finalCost;
+                double currentCost = currentNode.cost;
 //                double newCost = currentCost + 1;
                 double newCost = Vertex.distance( currentNode.location, adjacentNode.location );
                 newCost += currentCost;
                 
-                if( adjacentNode.finalCost == -1 || adjacentNode.finalCost > newCost ) {
-                    adjacentNode.finalCost = newCost;
+                if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
+                    adjacentNode.cost = newCost;
                 }
             }
 
             currentNode.visited = true;
             //print(nodes);
 
-            if( targetNode.finalCost != -1 ) {
+            if( targetNode.cost != -1 ) {
                 break;
             }
             else {
@@ -49,7 +49,7 @@ public class Pathfinder
 
         //print(nodes);
         
-        if( targetNode.finalCost != -1 ) {
+        if( targetNode.cost != -1 ) {
             return walkBackwards( nodes, targetNode );
         }
         else {
@@ -64,7 +64,7 @@ public class Pathfinder
         Node startNode = nodes[origin.y][origin.x];
         startNode.origin = true;
         startNode.visited = true;
-        startNode.finalCost = 0;
+        startNode.cost = 0;
 
         Node targetNode = nodes[target.y][target.x];
         targetNode.target = true;
@@ -74,20 +74,20 @@ public class Pathfinder
         while( currentNode != null ) {
             List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
             for( Node adjacentNode : adjacent ) {
-                double currentCost = currentNode.finalCost;
+                double currentCost = currentNode.cost;
                 double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
                 double heurCost = Vertex.distance( adjacentNode.location, target );
                 double finalCost = currentCost + graphCost + heurCost;
                 
-                if( adjacentNode.finalCost == -1 || adjacentNode.finalCost > finalCost ) {
-                    adjacentNode.finalCost = finalCost;
+                if( adjacentNode.cost == -1 || adjacentNode.cost > finalCost ) {
+                    adjacentNode.cost = finalCost;
                 }
             }
 
             currentNode.visited = true;
             //print(nodes);
 
-            if( targetNode.finalCost != -1 ) {
+            if( targetNode.cost != -1 ) {
                 break;
             }
             else {
@@ -97,7 +97,7 @@ public class Pathfinder
 
         //print(nodes);
         
-        if( targetNode.finalCost != -1 ) {
+        if( targetNode.cost != -1 ) {
             return walkBackwards( nodes, targetNode );
         }
         else {
@@ -138,8 +138,8 @@ public class Pathfinder
             for( int col = 0; col < nodes[row].length; col++ ){
                 Node node = nodes[row][col];
                 
-                if( !node.visited && node.traversable && node.finalCost != -1 ){
-                    if( next == null || next.finalCost > node.finalCost ){
+                if( !node.visited && node.traversable && node.cost != -1 ){
+                    if( next == null || next.cost > node.cost ){
                         next = node;
                     }
                 }
@@ -166,12 +166,12 @@ public class Pathfinder
         Node smallest = null;
         List<Node> candidates = getAdjacentNodes(nodes, current);
         for( Node node : candidates ){
-            if( node.finalCost < current.finalCost ){
+            if( node.cost < current.cost ){
                 smallest = node;
             }
             
-            if( lowestCost == -1 || node.finalCost < lowestCost ){
-                lowestCost = node.finalCost;
+            if( lowestCost == -1 || node.cost < lowestCost ){
+                lowestCost = node.cost;
             }
         }
         
@@ -203,7 +203,7 @@ public class Pathfinder
                     result += "[v]";
                     //result += "[" + node.dist + "]";
                 }
-                else if( node.finalCost != -1 ) {
+                else if( node.cost != -1 ) {
                     result += "[?]";
                 }
                 else {

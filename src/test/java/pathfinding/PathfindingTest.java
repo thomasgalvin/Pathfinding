@@ -66,14 +66,19 @@ public class PathfindingTest {
         nodes[3][4].traversable = false;
         nodes[4][4].traversable = false;
         nodes[5][4].traversable = false;
-
-        List<Node> path = Pathfinder.dijkstra(nodes, new Vertex( 9, 0 ), new Vertex( 0, 9 ) );
-        logger.info( "Dijkstra" );
-        Pathfinder.printPath( nodes, path );
         
-        path = Pathfinder.astar(nodes, new Vertex( 9, 0 ), new Vertex( 0, 9 ) );
+        Vertex start = new Vertex(9,0);
+        Vertex end = new Vertex(0,9);
+
+        List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
+        logger.info( "Dijkstra" );
+        Pathfinder.printPath( nodes, dij );
+        
+        List<Node> astar = Pathfinder.astar(nodes, start, end );
         logger.info( "A*" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, astar );
+        
+        logger.info( "Equal? " + dij.equals( astar ) );
     }
 
     @Test
@@ -91,13 +96,18 @@ public class PathfindingTest {
         nodes[5][4].traversable = false;
         nodes[5][5].traversable = false;
 
-        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 2 ), new Vertex( 9, 9 ) );
+        Vertex start = new Vertex(0,2);
+        Vertex end = new Vertex(9,9);
+
+        List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
         logger.info( "Dijkstra" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, dij );
         
-        path = Pathfinder.astar( nodes, new Vertex( 0, 2 ), new Vertex( 9, 9 ) );
+        List<Node> astar = Pathfinder.astar(nodes, start, end );
         logger.info( "A*" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, astar );
+        
+        logger.info( "Equal? " + dij.equals( astar ) );
     }
 
     @Test
@@ -122,26 +132,36 @@ public class PathfindingTest {
         nodes[1][7].traversable = false;
         nodes[1][8].traversable = false;
 
-        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 0 ), new Vertex( 2, 0 ) );
+        Vertex start = new Vertex(0,0);
+        Vertex end = new Vertex(2,0);
+
+        List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
         logger.info( "Dijkstra" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, dij );
         
-        path = Pathfinder.astar( nodes, new Vertex( 0, 0 ), new Vertex( 2, 0 ) );
+        List<Node> astar = Pathfinder.astar(nodes, start, end );
         logger.info( "A*" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, astar );
+        
+        logger.info( "Equal? " + dij.equals( astar ) );
     }
     
     @Test
     public void testFour() throws Exception {
         Node[][] nodes = makeNodes();
 
-        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        Vertex start = new Vertex(0,0);
+        Vertex end = new Vertex( nodes.length-1, nodes[0].length-1 );
+
+        List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
         logger.info( "Dijkstra" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, dij );
         
-        path = Pathfinder.astar( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        List<Node> astar = Pathfinder.astar(nodes, start, end );
         logger.info( "A*" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, astar );
+        
+        logger.info( "Equal? " + dij.equals( astar ) );
     }
 
     @Test
@@ -157,14 +177,18 @@ public class PathfindingTest {
         nodes[6][1].traversable = false;
         nodes[7][1].traversable = false;
         nodes[8][1].traversable = false;
-        
 
-        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        Vertex start = new Vertex(0,0);
+        Vertex end = new Vertex( nodes.length-1, nodes[0].length-1 );
+
+        List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
         logger.info( "Dijkstra" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, dij );
         
-        path = Pathfinder.astar( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        List<Node> astar = Pathfinder.astar(nodes, start, end );
         logger.info( "A*" );
-        Pathfinder.printPath( nodes, path );
+        Pathfinder.printPath( nodes, astar );
+        
+        logger.info( "Equal? " + dij.equals( astar ) );
     }
 }
