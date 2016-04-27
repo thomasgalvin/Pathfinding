@@ -1,6 +1,7 @@
 package pathfinding;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class Pathfinder
                 
                 if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
                     adjacentNode.cost = newCost;
+                    adjacentNode.previous = currentNode;
                 }
             }
 
@@ -48,7 +50,7 @@ public class Pathfinder
         //print(nodes);
         
         if( targetNode.cost != -1 ) {
-            return walkBackwards( nodes, targetNode );
+            return walkBackwards( targetNode );
         }
         else {
             return null;
@@ -79,6 +81,7 @@ public class Pathfinder
                 
                 if( adjacentNode.cost == -1 || adjacentNode.cost > finalCost ) {
                     adjacentNode.cost = finalCost;
+                    adjacentNode.previous = currentNode;
                 }
             }
 
@@ -96,7 +99,7 @@ public class Pathfinder
         //print(nodes);
         
         if( targetNode.cost != -1 ) {
-            return walkBackwards( nodes, targetNode );
+            return walkBackwards( targetNode );
         }
         else {
             return null;
@@ -147,64 +150,18 @@ public class Pathfinder
         return next;
     }
 
-    public static List<Node> walkBackwards( Node[][] nodes, Node targetNode ){
+    private static List<Node> walkBackwards( Node targetNode ){
         List<Node> path = new ArrayList();
         path.add( targetNode );
-        Node smallestNeighbor = getSmallestNeighbor(nodes, targetNode);
-        while( smallestNeighbor != null ){
-            path.add(smallestNeighbor);
-            smallestNeighbor = getSmallestNeighbor(nodes, smallestNeighbor);
-        }
-        return path;
-    }
-
-    public static Node getSmallestNeighbor( Node[][] nodes, Node current ){
-//        logger.info( "smallest neighbor:" );
-//        logger.info( "    current:   " + current.matrixLocation );
-        Node smallest = null;
-        double lowest = Double.MAX_VALUE;
         
-        List<Node> candidates = getAdjacentNodes(nodes, current);
-        for( Node node : candidates ){
-//            logger.info( "    candidate: " + node.matrixLocation + " cost: " + node.cost );
-            if( node != current && node.cost != -1 && node.cost < current.cost && node.cost < lowest ) {
-                smallest = node;
-                lowest = smallest.cost;
-//                logger.info( "        selected" );
-            }
+        Node previous = targetNode.previous;
+        while( previous != null ){
+            path.add( previous );
+            previous = previous.previous;
         }
-//        logger.info( "---" );
-//        logger.info( " " );
-        return smallest;
-    }
-    
-    public static void printCoordinates( Node[][] nodes ) {
-        String result = "\n";
-        for( int row = 0; row < nodes.length; row++ ) {
-            for( int col = 0; col < nodes[row].length; col++ ) {
-                Node node = nodes[row][col];
-                result += "[" + node.location.x + "," + node.location.y + "]";
-            }
-            result += "\n";
-        }
-        logger.info( result );
-    }
-    
-    public static void printCost( Node[][] nodes ) {
-        String result = "\n";
-        for( int row = 0; row < nodes.length; row++ ) {
-            for( int col = 0; col < nodes[row].length; col++ ) {
-                Node node = nodes[row][col];
-                if( node.traversable ){
-                    result += "[" + ((int)node.cost) + "]";
-                }
-                else {
-                    result += "[X]";
-                }
-            }
-            result += "\n";
-        }
-        logger.info( result );
+        
+        Collections.reverse( path );
+        return path;
     }
 
     public static void print( Node[][] nodes ) {

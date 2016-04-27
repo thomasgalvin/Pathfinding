@@ -10,6 +10,7 @@ public class Node {
     public boolean visited;
     public boolean clear = false;
     public boolean path = false;
+    public Node previous;
 
     public Node() {
         this( 0, 0, 0, 0 );
