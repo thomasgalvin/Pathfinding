@@ -213,4 +213,22 @@ public class PathfindingTest {
         
         logger.info( "Equal? " + dij.equals( astar ) );
     }
+    
+    @Test
+    public void testSix() throws Exception {
+        Node[][] nodes = makeNodes();
+
+        Vertex start = new Vertex(0,0);
+        Vertex end = new Vertex( 1,1 );
+
+        List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
+        logger.info( "Dijkstra" );
+        Pathfinder.printPath( nodes, dij );
+        
+        List<Node> astar = Pathfinder.astar(nodes, start, end );
+        logger.info( "A*" );
+        Pathfinder.printPath( nodes, astar );
+        
+        logger.info( "Equal? " + dij.equals( astar ) );
+    }
 }
