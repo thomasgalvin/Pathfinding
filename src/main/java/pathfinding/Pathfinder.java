@@ -271,10 +271,7 @@ public class Pathfinder
             }
         }
 
-        logger.info( "Path: " + path.size() );
         for( Node node : path ){
-            logger.info( "    " + node.matrixLocation );
-            node.clear = false;
             node.path = true;
         }
 

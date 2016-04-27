@@ -7,9 +7,9 @@ public class Node {
     public boolean origin = false;
     public boolean target = false;
     public boolean traversable = true;
-    public boolean visited;
-    public boolean clear = false;
-    public boolean path = false;
+    public boolean visited; //used during processing to prevent loopback
+    public boolean clear = false; //used when printing the final path
+    public boolean path = false; //used to indicate final path
     public Node previous;
 
     public Node() {
