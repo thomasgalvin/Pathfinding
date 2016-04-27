@@ -11,23 +11,30 @@ public class Pathfinder
     private static final Logger logger = LoggerFactory.getLogger( Pathfinder.class );
     
     public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target ) {
-//        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
-//        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
+        //logger.info( "Search from: " + origin + " to " + target );
 
         clear( nodes );
 
-        Node startNode = nodes[origin.y][origin.x];
+        Node startNode = nodes[origin.x][origin.y];
         startNode.origin = true;
         startNode.visited = true;
         startNode.cost = 0;
 
-        Node targetNode = nodes[target.y][target.x];
+        Node targetNode = nodes[target.x][target.y];
         targetNode.target = true;
+        
+        if( origin.equals( target ) ){
+            List<Node> result = new ArrayList();
+            result.add( targetNode );
+            return result;
+        }
+        
+        //print(nodes);
 
         Node currentNode = startNode;
 
         while( currentNode != null ) {
-//            logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
+            //logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
             
             List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
             for( Node adjacentNode : adjacent ) {
@@ -53,7 +60,7 @@ public class Pathfinder
                 currentNode = getNextNode( nodes );
             }
             
-//            print(nodes);
+            //print(nodes);
         }
 
         if( targetNode.cost != -1 ) {
@@ -127,6 +134,10 @@ public class Pathfinder
     }
 
     private static List<Node> walkBackwards( Node targetNode ){
+        if( targetNode.previous == null ){
+            return null;
+        }
+        
         List<Node> path = new ArrayList();
         path.add( targetNode );
         
@@ -141,42 +152,57 @@ public class Pathfinder
     }
 
     public static void print( Node[][] nodes ) {
-        String result = "\n";
-        for( int col = 0; col < nodes.length; col++ ) {
-            for( int row = 0; row < nodes[col].length; row++ ) {
+        int cols = nodes.length;
+        int rows = nodes[0].length;
+        StringBuilder[] rowStrings = new StringBuilder[rows];
+        for( int row = 0; row < rowStrings.length; row++ ){
+            rowStrings[row] = new StringBuilder();
+        }
+        
+        for( int row = 0; row < rows; row ++){
+            for( int col = 0; col < cols; col++ ){
                 Node node = nodes[col][row];
-
+                
                 if( !node.traversable ) {
-                    result += "[!]";
+                    rowStrings[row].append("[!]");
+                }
+                else if( node.origin && node.target ) {
+                    rowStrings[row].append("[*]");
                 }
                 else if( node.origin ) {
-                    result += "[s]";
+                    rowStrings[row].append("[s]");
                 }
                 else if( node.target ) {
-                    result += "[t]";
+                    rowStrings[row].append("[t]");
                 }
                 else if( node.path ) {
-                    result += "[*]";
+                    rowStrings[row].append("[*]");
                 }
                 else if( node.clear ) {
-                    result += "[ ]";
+                    rowStrings[row].append("[ ]");
                 }
                 else if( node.visited ) {
-                    result += "[v]";
-                    //result += "[" + node.dist + "]";
+                    rowStrings[row].append("[v]");
                 }
                 else if( node.cost != -1 ) {
-                    result += "[?]";
+                    rowStrings[row].append("[?]");
                 }
                 else {
-                    result += "[ ]";
+                    rowStrings[row].append("[ ]");
                 }
             }
-            result += "\n";
         }
-        logger.info( result );
+        
+        StringBuilder result = new StringBuilder();
+        result.append( "\n" );
+        for( StringBuilder row : rowStrings ){
+            result.append( row.toString() );
+            result.append( "\n" );
+        }
+        result.append( "\n" );
+        logger.info( result.toString() );
     }
-
+    
     public static void printPath( Node[][] nodes, List<Node> path ){
         if( path == null ){
             logger.error( "No path found" );
