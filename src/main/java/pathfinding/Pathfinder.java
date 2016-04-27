@@ -58,7 +58,7 @@ public class Pathfinder
     }
     
     public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
-        //        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
+//        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
 //        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
         
         Node startNode = nodes[origin.y][origin.x];
