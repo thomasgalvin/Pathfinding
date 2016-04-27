@@ -134,20 +134,6 @@ public class PathfindingTest {
         Vertex start = new Vertex(0,0);
         Vertex end = new Vertex( nodes.length-2, nodes[0].length-1 );
 
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "Dijkstra" );
         List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
         Pathfinder.printPath( nodes, dij );
     }
@@ -168,21 +154,7 @@ public class PathfindingTest {
 
         Vertex start = new Vertex(0,0);
         Vertex end = new Vertex( 5, 3 );
-
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "*** *** ***" );
-        logger.info( "Dijkstra" );
+        
         List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
         Pathfinder.printPath( nodes, dij );
     }
