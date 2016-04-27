@@ -81,11 +81,11 @@ public class PathfindingTest {
         logger.info( "Dijkstra" );
         Pathfinder.printPath( nodes, dij );
         
-        List<Node> astar = Pathfinder.astar(nodes, start, end );
-        logger.info( "A*" );
-        Pathfinder.printPath( nodes, astar );
-        
-        logger.info( "Equal? " + dij.equals( astar ) );
+//        List<Node> astar = Pathfinder.astar(nodes, start, end );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        
+//        logger.info( "Equal? " + dij.equals( astar ) );
     }
 
     @Test
@@ -109,11 +109,52 @@ public class PathfindingTest {
         logger.info( "Dijkstra" );
         Pathfinder.printPath( nodes, dij );
         
-        List<Node> astar = Pathfinder.astar(nodes, start, end );
-        logger.info( "A*" );
-        Pathfinder.printPath( nodes, astar );
+//        List<Node> astar = Pathfinder.astar(nodes, start, end );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        
+//        logger.info( "Equal? " + dij.equals( astar ) );
+    }
+    
+        @Test
+    public void testTwoA() throws Exception {
+        Node[][] nodes = makeNodes();
+
+        nodes[0][1].traversable = false;
+        nodes[1][1].traversable = false;
+        nodes[2][1].traversable = false;
+        nodes[3][1].traversable = false;
+        nodes[4][1].traversable = false;
+        nodes[5][1].traversable = false;
+        nodes[6][1].traversable = false;
+        nodes[7][1].traversable = false;
+        nodes[8][1].traversable = false;
+
+        Vertex start = new Vertex(0,0);
+        Vertex end = new Vertex( nodes.length-2, nodes[0].length-1 );
+
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "*** *** ***" );
+        logger.info( "Dijkstra" );
+        List<Node> dij = Pathfinder.dijkstra(nodes, start, end );
+        Pathfinder.printPath( nodes, dij );
         
-        logger.info( "Equal? " + dij.equals( astar ) );
+//        List<Node> astar = Pathfinder.astar(nodes, start, end );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        
+//        logger.info( "Equal? " + dij.equals( astar ) );
     }
     
     @Test
@@ -142,11 +183,11 @@ public class PathfindingTest {
         logger.info( "Dijkstra" );
         Pathfinder.printPath( nodes, dij );
         
-        List<Node> astar = Pathfinder.astar(nodes, start, end );
-        logger.info( "A*" );
-        Pathfinder.printPath( nodes, astar );
-        
-        logger.info( "Equal? " + dij.equals( astar ) );
+//        List<Node> astar = Pathfinder.astar(nodes, start, end );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        
+//        logger.info( "Equal? " + dij.equals( astar ) );
     }
 
     @Test
@@ -171,11 +212,11 @@ public class PathfindingTest {
         logger.info( "Dijkstra" );
         Pathfinder.printPath( nodes, dij );
         
-        List<Node> astar = Pathfinder.astar(nodes, start, end );
-        logger.info( "A*" );
-        Pathfinder.printPath( nodes, astar );
-        
-        logger.info( "Equal? " + dij.equals( astar ) );
+//        List<Node> astar = Pathfinder.astar(nodes, start, end );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        
+//        logger.info( "Equal? " + dij.equals( astar ) );
     }
 
     @Test
@@ -207,11 +248,11 @@ public class PathfindingTest {
         logger.info( "Dijkstra" );
         Pathfinder.printPath( nodes, dij );
         
-        List<Node> astar = Pathfinder.astar(nodes, start, end );
-        logger.info( "A*" );
-        Pathfinder.printPath( nodes, astar );
-        
-        logger.info( "Equal? " + dij.equals( astar ) );
+//        List<Node> astar = Pathfinder.astar(nodes, start, end );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        
+//        logger.info( "Equal? " + dij.equals( astar ) );
     }
     
     @Test
@@ -225,10 +266,10 @@ public class PathfindingTest {
         logger.info( "Dijkstra" );
         Pathfinder.printPath( nodes, dij );
         
-        List<Node> astar = Pathfinder.astar(nodes, start, end );
-        logger.info( "A*" );
-        Pathfinder.printPath( nodes, astar );
-        
-        logger.info( "Equal? " + dij.equals( astar ) );
+//        List<Node> astar = Pathfinder.astar(nodes, start, end );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        
+//        logger.info( "Equal? " + dij.equals( astar ) );
     }
 }

@@ -13,54 +13,9 @@ public class Pathfinder
     public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target ) {
 //        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
 //        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
-        
-        Node startNode = nodes[origin.y][origin.x];
-        startNode.origin = true;
-        startNode.visited = true;
-        startNode.cost = 0;
 
-        Node targetNode = nodes[target.y][target.x];
-        targetNode.target = true;
+        clear( nodes );
 
-        Node currentNode = startNode;
-
-        while( currentNode != null ) {
-            List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
-            for( Node adjacentNode : adjacent ) {
-                double currentCost = currentNode.cost;
-                double newCost = Vertex.distance( currentNode.location, adjacentNode.location );
-                newCost += currentCost;
-                
-                if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
-                    adjacentNode.cost = newCost;
-                    adjacentNode.previous = currentNode;
-                }
-            }
-
-            currentNode.visited = true;
-
-            if( targetNode.cost != -1 ) {
-                break;
-            }
-            else {
-                currentNode = getNextNode( nodes );
-            }
-        }
-
-        //print(nodes);
-        
-        if( targetNode.cost != -1 ) {
-            return walkBackwards( targetNode );
-        }
-        else {
-            return null;
-        }
-    }
-    
-    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
-//        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
-//        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
-        
         Node startNode = nodes[origin.y][origin.x];
         startNode.origin = true;
         startNode.visited = true;
@@ -76,8 +31,7 @@ public class Pathfinder
             for( Node adjacentNode : adjacent ) {
                 double currentCost = currentNode.cost;
                 double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
-                double heurCost = Vertex.distance( adjacentNode.location, target );
-                double newCost = currentCost + graphCost + heurCost;
+                double newCost = currentCost + graphCost;
                 
                 if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
                     adjacentNode.cost = newCost;
@@ -132,6 +86,24 @@ public class Pathfinder
         return result;
     }
 
+    public static Node clear( Node[][] nodes ){
+        Node next = null;
+        for( int row = 0; row < nodes.length; row++ ){
+            for( int col = 0; col < nodes[row].length; col++ ){
+                Node node = nodes[row][col];
+                node.cost = -1;
+                node.origin = false;
+                node.target = false;
+                node.visited = false;
+                node.clear = false;
+                node.path = false;
+                node.previous = null;
+            }
+        }
+        
+        return next;
+    }
+    
     public static Node getNextNode( Node[][] nodes ){
         Node next = null;
         for( int row = 0; row < nodes.length; row++ ){
