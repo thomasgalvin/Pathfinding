@@ -76,7 +76,7 @@ public class PathfindingTest {
         startTime = System.currentTimeMillis();
         List<Node> astar = Pathfinder.bestFirst(nodes, start, end );
         endTime = System.currentTimeMillis();
-        long gbfTime = (endTime - startTime);
+        long bfTime = (endTime - startTime);
         
 //        logger.info( "Dijkstra" );
 //        Pathfinder.printPath( nodes, dijkstra );
@@ -84,7 +84,7 @@ public class PathfindingTest {
 //        Pathfinder.printPath( nodes, astar );
         logger.info( "Same solution:         " + dijkstra.equals( astar ) );
         logger.info( "Dijkstra time:         " + dTime + " ms" );
-        logger.info( "Greedy Best First time :       " + gbfTime + " ms" );
+        logger.info( "Best First time :      " + bfTime + " ms" );
         logger.info( "" );
     }
     
