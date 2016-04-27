@@ -46,4 +46,28 @@ public class Vertex
         return true;
     }
     
+    @Override
+    public String toString(){
+        return "Vertext[" + x + "," + y + "]";
+    }
+    
+    public double distance( Vertex vertex ){
+        return distance( this.x, this.y, vertex.x, vertex.y );
+    }
+    
+    public static double distance( Vertex one, Vertex two ){
+        return distance( one.x, one.y, two.x, two.y );
+    }
+    
+    public static double distance( int x1, int y1, int x2, int y2 ){
+        double xx = x1 - x2;
+        double yy = y1 - y2;
+            
+        xx *= xx;
+        yy *= yy;
+        
+        double z = xx + yy;
+        double result = Math.sqrt( z );
+        return result;
+    }
 }

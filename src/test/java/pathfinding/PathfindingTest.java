@@ -6,14 +6,15 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static pathfinding.PathFinder.findPath;
-import static pathfinding.PathFinder.printPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author galvint
  */
 public class PathfindingTest {
+    private static final Logger logger = LoggerFactory.getLogger( PathfindingTest.class );
 
     public PathfindingTest() {
     }
@@ -35,14 +36,12 @@ public class PathfindingTest {
     }
 
     public static Node[][] makeNodes() {
-        int width = 100;
-        int height = 100;
+        int width = 10;
+        int height = 10;
         Node[][] nodes = new Node[ width ][ height ];
         for( int x = 0; x < width; x++ ) {
             for( int y = 0; y < height; y++ ) {
-                Node node = new Node();
-                node.x = x;
-                node.y = y;
+                Node node = new Node(x,y);
                 nodes[x][y] = node;
             }
         }
@@ -68,8 +67,13 @@ public class PathfindingTest {
         nodes[4][4].traversable = false;
         nodes[5][4].traversable = false;
 
-        List<Node> path = findPath( nodes, new Vertex( 9, 0 ), new Vertex( 0, 9 ) );
-        printPath( nodes, path );
+        List<Node> path = Pathfinder.dijkstra(nodes, new Vertex( 9, 0 ), new Vertex( 0, 9 ) );
+        logger.info( "Dijkstra" );
+        Pathfinder.printPath( nodes, path );
+        
+        path = Pathfinder.astar(nodes, new Vertex( 9, 0 ), new Vertex( 0, 9 ) );
+        logger.info( "A*" );
+        Pathfinder.printPath( nodes, path );
     }
 
     @Test
@@ -87,8 +91,13 @@ public class PathfindingTest {
         nodes[5][4].traversable = false;
         nodes[5][5].traversable = false;
 
-        List<Node> path = findPath( nodes, new Vertex( 0, 2 ), new Vertex( 9, 9 ) );
-        printPath( nodes, path );
+        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 2 ), new Vertex( 9, 9 ) );
+        logger.info( "Dijkstra" );
+        Pathfinder.printPath( nodes, path );
+        
+        path = Pathfinder.astar( nodes, new Vertex( 0, 2 ), new Vertex( 9, 9 ) );
+        logger.info( "A*" );
+        Pathfinder.printPath( nodes, path );
     }
 
     @Test
@@ -113,16 +122,26 @@ public class PathfindingTest {
         nodes[1][7].traversable = false;
         nodes[1][8].traversable = false;
 
-        List<Node> path = findPath( nodes, new Vertex( 0, 0 ), new Vertex( 2, 0 ) );
-        printPath( nodes, path );
+        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 0 ), new Vertex( 2, 0 ) );
+        logger.info( "Dijkstra" );
+        Pathfinder.printPath( nodes, path );
+        
+        path = Pathfinder.astar( nodes, new Vertex( 0, 0 ), new Vertex( 2, 0 ) );
+        logger.info( "A*" );
+        Pathfinder.printPath( nodes, path );
     }
     
     @Test
     public void testFour() throws Exception {
         Node[][] nodes = makeNodes();
 
-        List<Node> path = findPath( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
-        printPath( nodes, path );
+        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        logger.info( "Dijkstra" );
+        Pathfinder.printPath( nodes, path );
+        
+        path = Pathfinder.astar( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        logger.info( "A*" );
+        Pathfinder.printPath( nodes, path );
     }
 
     @Test
@@ -140,7 +159,12 @@ public class PathfindingTest {
         nodes[8][1].traversable = false;
         
 
-        List<Node> path = findPath( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
-        printPath( nodes, path );
+        List<Node> path = Pathfinder.dijkstra( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        logger.info( "Dijkstra" );
+        Pathfinder.printPath( nodes, path );
+        
+        path = Pathfinder.astar( nodes, new Vertex( 0, 0 ), new Vertex( nodes.length-1, nodes[0].length-1 ) );
+        logger.info( "A*" );
+        Pathfinder.printPath( nodes, path );
     }
 }
