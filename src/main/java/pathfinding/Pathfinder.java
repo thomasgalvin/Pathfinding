@@ -267,10 +267,13 @@ public class Pathfinder
             for( int row = 0; row < nodes[col].length; row++ ) {
                 Node node = nodes[col][row];
                 node.clear = true;
+                node.path = false;
             }
         }
 
+        logger.info( "Path: " + path.size() );
         for( Node node : path ){
+            logger.info( "    " + node.matrixLocation );
             node.clear = false;
             node.path = true;
         }
