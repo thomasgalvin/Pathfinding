@@ -10,8 +10,8 @@ public class Pathfinder
     private static final Logger logger = LoggerFactory.getLogger( Pathfinder.class );
     
     public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target ) {
-        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
-        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
+//        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
+//        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
         
         Node startNode = nodes[origin.y][origin.x];
         startNode.origin = true;
@@ -27,7 +27,6 @@ public class Pathfinder
             List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
             for( Node adjacentNode : adjacent ) {
                 double currentCost = currentNode.cost;
-//                double newCost = currentCost + 1;
                 double newCost = Vertex.distance( currentNode.location, adjacentNode.location );
                 newCost += currentCost;
                 
@@ -37,7 +36,6 @@ public class Pathfinder
             }
 
             currentNode.visited = true;
-            //print(nodes);
 
             if( targetNode.cost != -1 ) {
                 break;
@@ -58,8 +56,8 @@ public class Pathfinder
     }
     
     public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
-        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
-        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
+//        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
+//        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
         
         Node startNode = nodes[origin.y][origin.x];
         startNode.origin = true;
@@ -107,14 +105,14 @@ public class Pathfinder
     
     public static List<Node> getAdjacentNodes(Node[][]nodes, Node current){
         Vertex[] candidates = {
-            new Vertex( current.location.y+1, current.location.x ),
-            new Vertex( current.location.y+1, current.location.x+1 ),
-            new Vertex( current.location.y+1, current.location.x-1 ),
-            new Vertex( current.location.y,   current.location.x+1 ),
-            new Vertex( current.location.y,   current.location.x-1 ),
-            new Vertex( current.location.y-1, current.location.x ),
-            new Vertex( current.location.y-1, current.location.x+1 ),
-            new Vertex( current.location.y-1, current.location.x-1 ),
+            new Vertex( current.matrixLocation.y+1, current.matrixLocation.x ),
+            new Vertex( current.matrixLocation.y+1, current.matrixLocation.x+1 ),
+            new Vertex( current.matrixLocation.y+1, current.matrixLocation.x-1 ),
+            new Vertex( current.matrixLocation.y,   current.matrixLocation.x+1 ),
+            new Vertex( current.matrixLocation.y,   current.matrixLocation.x-1 ),
+            new Vertex( current.matrixLocation.y-1, current.matrixLocation.x ),
+            new Vertex( current.matrixLocation.y-1, current.matrixLocation.x+1 ),
+            new Vertex( current.matrixLocation.y-1, current.matrixLocation.x-1 ),
         };
     
         List<Node> result = new ArrayList();
@@ -161,21 +159,47 @@ public class Pathfinder
     }
 
     public static Node getSmallestNeighbor( Node[][] nodes, Node current ){
-        double lowestCost = -1;
-        
         Node smallest = null;
         List<Node> candidates = getAdjacentNodes(nodes, current);
         for( Node node : candidates ){
-            if( node.cost < current.cost ){
-                smallest = node;
-            }
             
-            if( lowestCost == -1 || node.cost < lowestCost ){
-                lowestCost = node.cost;
+            if( node.cost != -1 ) {
+                if( node.cost < current.cost ){
+                    smallest = node;
+                }
             }
         }
         
         return smallest;
+    }
+    
+    public static void printCoordinates( Node[][] nodes ) {
+        String result = "\n";
+        for( int row = 0; row < nodes.length; row++ ) {
+            for( int col = 0; col < nodes[row].length; col++ ) {
+                Node node = nodes[row][col];
+                result += "[" + node.location.x + "," + node.location.y + "]";
+            }
+            result += "\n";
+        }
+        logger.info( result );
+    }
+    
+    public static void printCost( Node[][] nodes ) {
+        String result = "\n";
+        for( int row = 0; row < nodes.length; row++ ) {
+            for( int col = 0; col < nodes[row].length; col++ ) {
+                Node node = nodes[row][col];
+                if( node.traversable ){
+                    result += "[" + ((int)node.cost) + "]";
+                }
+                else {
+                    result += "[X]";
+                }
+            }
+            result += "\n";
+        }
+        logger.info( result );
     }
 
     public static void print( Node[][] nodes ) {
