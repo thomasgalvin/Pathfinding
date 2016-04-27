@@ -159,17 +159,22 @@ public class Pathfinder
     }
 
     public static Node getSmallestNeighbor( Node[][] nodes, Node current ){
+//        logger.info( "smallest neighbor:" );
+//        logger.info( "    current:   " + current.matrixLocation );
         Node smallest = null;
+        double lowest = Double.MAX_VALUE;
+        
         List<Node> candidates = getAdjacentNodes(nodes, current);
         for( Node node : candidates ){
-            
-            if( node.cost != -1 ) {
-                if( node.cost < current.cost ){
-                    smallest = node;
-                }
+//            logger.info( "    candidate: " + node.matrixLocation + " cost: " + node.cost );
+            if( node != current && node.cost != -1 && node.cost < current.cost && node.cost < lowest ) {
+                smallest = node;
+                lowest = smallest.cost;
+//                logger.info( "        selected" );
             }
         }
-        
+//        logger.info( "---" );
+//        logger.info( " " );
         return smallest;
     }
     
