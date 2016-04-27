@@ -46,8 +46,60 @@ public class Pathfinder
                     adjacentNode.cost = newCost;
                     adjacentNode.previous = currentNode;
                 }
+            }
+
+            currentNode.visited = true;
+            currentNode = getNextNode( nodes );
+            
+            //print(nodes);
+        }
+        
+        //print(nodes);
+
+        if( targetNode.cost != -1 ) {
+            return walkBackwards( targetNode );
+        }
+        else {
+            return null;
+        }
+    }
+    
+    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
+        //logger.info( "Search from: " + origin + " to " + target );
+
+        clear( nodes );
+
+        Node startNode = nodes[origin.x][origin.y];
+        startNode.origin = true;
+        startNode.visited = true;
+        startNode.cost = 0;
+
+        Node targetNode = nodes[target.x][target.y];
+        targetNode.target = true;
+        
+        if( origin.equals( target ) ){
+            List<Node> result = new ArrayList();
+            result.add( targetNode );
+            return result;
+        }
+        
+        //print(nodes);
+
+        Node currentNode = startNode;
+
+        while( currentNode != null ) {
+            //logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
+            
+            List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
+            for( Node adjacentNode : adjacent ) {
+                double currentCost = currentNode.cost;
+                double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
+                double heurCost = Vertex.distance( currentNode.location, adjacentNode.location );
+                double newCost = currentCost + graphCost + heurCost;
                 
-                if( currentNode.matrixLocation.x == 9 ){
+                if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
+                    adjacentNode.cost = newCost;
+                    adjacentNode.previous = currentNode;
                 }
             }
 
@@ -59,9 +111,11 @@ public class Pathfinder
             else {
                 currentNode = getNextNode( nodes );
             }
-            
+
             //print(nodes);
         }
+        
+        //print(nodes);
 
         if( targetNode.cost != -1 ) {
             return walkBackwards( targetNode );

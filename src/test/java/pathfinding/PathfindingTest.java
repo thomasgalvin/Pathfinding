@@ -38,8 +38,8 @@ public class PathfindingTest {
 
     public static Node[][] makeNodes() {
         int multiplier = 5;
-        int width = 10;
-        int height = 10;
+        int width = 100;
+        int height = 100;
         
         Node[][] nodes = new Node[ width ][ height ];
         for( int x = 0; x < width; x++ ){
@@ -75,11 +75,21 @@ public class PathfindingTest {
         long startTime = System.currentTimeMillis();
         List<Node> dijkstra = Pathfinder.dijkstra(nodes, start, end );
         long endTime = System.currentTimeMillis();
+        long dTime = (endTime - startTime);
         
-        Pathfinder.printPath( nodes, dijkstra );
+        startTime = System.currentTimeMillis();
+        List<Node> astar = Pathfinder.astar(nodes, start, end );
+        endTime = System.currentTimeMillis();
+        long aTime = (endTime - startTime);
         
-        long diff = (endTime - startTime);
-        logger.info( "time: " + diff + " ms" );
+//        logger.info( "Dijkstra" );
+//        Pathfinder.printPath( nodes, dijkstra );
+//        logger.info( "A*" );
+//        Pathfinder.printPath( nodes, astar );
+//        logger.info( "Same solution: " + dijkstra.equals( astar ) );
+        logger.info( "Dijkstra time: " + dTime + " ms" );
+        logger.info( "A* time:       " + aTime + " ms" );
+        logger.info( "" );
     }
     
     @Test
