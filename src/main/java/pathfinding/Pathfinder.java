@@ -64,7 +64,7 @@ public class Pathfinder
         }
     }
     
-    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
+    public static List<Node> greedyBestFirst( Node[][] nodes, Vertex origin, Vertex target ) {
         //logger.info( "Search from: " + origin + " to " + target );
 
         clear( nodes );

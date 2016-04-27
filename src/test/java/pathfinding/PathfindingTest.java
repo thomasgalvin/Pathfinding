@@ -74,17 +74,17 @@ public class PathfindingTest {
         long dTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
-        List<Node> astar = Pathfinder.astar(nodes, start, end );
+        List<Node> astar = Pathfinder.greedyBestFirst(nodes, start, end );
         endTime = System.currentTimeMillis();
-        long aTime = (endTime - startTime);
+        long gbfTime = (endTime - startTime);
         
 //        logger.info( "Dijkstra" );
 //        Pathfinder.printPath( nodes, dijkstra );
 //        logger.info( "A*" );
 //        Pathfinder.printPath( nodes, astar );
-        logger.info( "Same solution: " + dijkstra.equals( astar ) );
-        logger.info( "Dijkstra time: " + dTime + " ms" );
-        logger.info( "A* time:       " + aTime + " ms" );
+        logger.info( "Same solution:         " + dijkstra.equals( astar ) );
+        logger.info( "Dijkstra time:         " + dTime + " ms" );
+        logger.info( "Greedy Best First time :       " + gbfTime + " ms" );
         logger.info( "" );
     }
     
