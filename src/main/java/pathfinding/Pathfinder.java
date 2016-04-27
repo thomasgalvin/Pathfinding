@@ -27,6 +27,8 @@ public class Pathfinder
         Node currentNode = startNode;
 
         while( currentNode != null ) {
+            logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
+            
             List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
             for( Node adjacentNode : adjacent ) {
                 double currentCost = currentNode.cost;
@@ -37,6 +39,8 @@ public class Pathfinder
                     adjacentNode.cost = newCost;
                     adjacentNode.previous = currentNode;
                 }
+                
+                if( currentNode.matrixLocation.x == 9 ){}
             }
 
             currentNode.visited = true;
@@ -47,10 +51,10 @@ public class Pathfinder
             else {
                 currentNode = getNextNode( nodes );
             }
+            
+            print(nodes);
         }
 
-        //print(nodes);
-        
         if( targetNode.cost != -1 ) {
             return walkBackwards( targetNode );
         }
@@ -71,7 +75,7 @@ public class Pathfinder
             new Vertex( current.matrixLocation.y-1, current.matrixLocation.x-1 ),
         };
     
-        List<Node> result = new ArrayList();
+        List<Node> result = new ArrayList( candidates.length );
         for( int i = 0; i < candidates.length; i++ ){
             Vertex candidate = candidates[i];
             if( candidate.y >= 0 && candidate.y < nodes.length ){
