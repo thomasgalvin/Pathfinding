@@ -27,7 +27,7 @@ public class Pathfinder
         Node currentNode = startNode;
 
         while( currentNode != null ) {
-            logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
+//            logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
             
             List<Node> adjacent = getAdjacentNodes( nodes, currentNode );
             for( Node adjacentNode : adjacent ) {
@@ -40,7 +40,8 @@ public class Pathfinder
                     adjacentNode.previous = currentNode;
                 }
                 
-                if( currentNode.matrixLocation.x == 9 ){}
+                if( currentNode.matrixLocation.x == 9 ){
+                }
             }
 
             currentNode.visited = true;
@@ -52,7 +53,7 @@ public class Pathfinder
                 currentNode = getNextNode( nodes );
             }
             
-            print(nodes);
+//            print(nodes);
         }
 
         if( targetNode.cost != -1 ) {
@@ -65,22 +66,22 @@ public class Pathfinder
     
     public static List<Node> getAdjacentNodes(Node[][]nodes, Node current){
         Vertex[] candidates = {
-            new Vertex( current.matrixLocation.y+1, current.matrixLocation.x ),
-            new Vertex( current.matrixLocation.y+1, current.matrixLocation.x+1 ),
-            new Vertex( current.matrixLocation.y+1, current.matrixLocation.x-1 ),
-            new Vertex( current.matrixLocation.y,   current.matrixLocation.x+1 ),
-            new Vertex( current.matrixLocation.y,   current.matrixLocation.x-1 ),
-            new Vertex( current.matrixLocation.y-1, current.matrixLocation.x ),
-            new Vertex( current.matrixLocation.y-1, current.matrixLocation.x+1 ),
-            new Vertex( current.matrixLocation.y-1, current.matrixLocation.x-1 ),
+            new Vertex( current.matrixLocation.x+1, current.matrixLocation.y ),
+            new Vertex( current.matrixLocation.x+1, current.matrixLocation.y+1 ),
+            new Vertex( current.matrixLocation.x+1, current.matrixLocation.y-1 ),
+            new Vertex( current.matrixLocation.x,   current.matrixLocation.y+1 ),
+            new Vertex( current.matrixLocation.x,   current.matrixLocation.y-1 ),
+            new Vertex( current.matrixLocation.x-1, current.matrixLocation.y ),
+            new Vertex( current.matrixLocation.x-1, current.matrixLocation.y+1 ),
+            new Vertex( current.matrixLocation.x-1, current.matrixLocation.y-1 ),
         };
     
         List<Node> result = new ArrayList( candidates.length );
         for( int i = 0; i < candidates.length; i++ ){
             Vertex candidate = candidates[i];
-            if( candidate.y >= 0 && candidate.y < nodes.length ){
-                if( candidate.x >= 0 && candidate.x < nodes[0].length ){
-                    Node node = nodes[candidate.y][candidate.x];
+            if( candidate.x >= 0 && candidate.x < nodes.length ){
+                if( candidate.y >= 0 && candidate.y < nodes[0].length ){
+                    Node node = nodes[candidate.x][candidate.y];
                     if( node.traversable ){
                         result.add(node);
                     }
@@ -92,9 +93,9 @@ public class Pathfinder
 
     public static Node clear( Node[][] nodes ){
         Node next = null;
-        for( int row = 0; row < nodes.length; row++ ){
-            for( int col = 0; col < nodes[row].length; col++ ){
-                Node node = nodes[row][col];
+        for( int col = 0; col < nodes.length; col++ ){
+            for( int row = 0; row < nodes[col].length; row++ ){
+                Node node = nodes[col][row];
                 node.cost = -1;
                 node.origin = false;
                 node.target = false;
@@ -110,9 +111,9 @@ public class Pathfinder
     
     public static Node getNextNode( Node[][] nodes ){
         Node next = null;
-        for( int row = 0; row < nodes.length; row++ ){
-            for( int col = 0; col < nodes[row].length; col++ ){
-                Node node = nodes[row][col];
+        for( int col = 0; col < nodes.length; col++ ){
+            for( int row = 0; row < nodes[col].length; row++ ){
+                Node node = nodes[col][row];
                 
                 if( !node.visited && node.traversable && node.cost != -1 ){
                     if( next == null || next.cost > node.cost ){
@@ -141,9 +142,9 @@ public class Pathfinder
 
     public static void print( Node[][] nodes ) {
         String result = "\n";
-        for( int row = 0; row < nodes.length; row++ ) {
-            for( int col = 0; col < nodes[row].length; col++ ) {
-                Node node = nodes[row][col];
+        for( int col = 0; col < nodes.length; col++ ) {
+            for( int row = 0; row < nodes[col].length; row++ ) {
+                Node node = nodes[col][row];
 
                 if( !node.traversable ) {
                     result += "[!]";
@@ -182,9 +183,9 @@ public class Pathfinder
             return;
         }
 
-        for( int row = 0; row < nodes.length; row++ ){
-            for( int col = 0; col < nodes[row].length; col++ ){
-                Node node = nodes[row][col];
+        for( int col = 0; col < nodes.length; col++ ) {
+            for( int row = 0; row < nodes[col].length; row++ ) {
+                Node node = nodes[col][row];
                 node.clear = true;
             }
         }
