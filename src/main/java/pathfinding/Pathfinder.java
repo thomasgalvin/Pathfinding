@@ -58,7 +58,7 @@ public class Pathfinder
     }
     
     public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
-//        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
+        //        logger.info( "Search from: [" + origin + "] to [" + target + "]" );
 //        logger.info( "    px wide: " + nodes.length + "px high: " + nodes[0].length );
         
         Node startNode = nodes[origin.y][origin.x];
@@ -77,16 +77,15 @@ public class Pathfinder
                 double currentCost = currentNode.cost;
                 double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
                 double heurCost = Vertex.distance( adjacentNode.location, target );
-                double finalCost = currentCost + graphCost + heurCost;
+                double newCost = currentCost + graphCost + heurCost;
                 
-                if( adjacentNode.cost == -1 || adjacentNode.cost > finalCost ) {
-                    adjacentNode.cost = finalCost;
+                if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
+                    adjacentNode.cost = newCost;
                     adjacentNode.previous = currentNode;
                 }
             }
 
             currentNode.visited = true;
-            //print(nodes);
 
             if( targetNode.cost != -1 ) {
                 break;
