@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Pathfinder {
     private static final Logger logger = LoggerFactory.getLogger( Pathfinder.class );
@@ -272,20 +271,66 @@ public class Pathfinder {
         return bestFirst( nodes, origin, target, allowDiagonal );
     }
     
+    public static List<Node> astar( Node[][] nodes ) {
+        return astar( nodes, true );
+    }
+    
+    public static List<Node> astar( Node[][] nodes, boolean allowDiagonal ) {
+        Vertex origin = findOrigin( nodes );
+        Vertex target = findTarget( nodes );
+        return astar( nodes, origin, target, allowDiagonal );
+    }
+    
+    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
+        return astar( nodes, origin, target, true );
+    }
+    
     public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
+        clear( nodes );
+
+        Node startNode = nodes[origin.x][origin.y];
+        startNode.origin = true;
+        startNode.cost = 0;
+
+        Node targetNode = nodes[target.x][target.y];
+        targetNode.target = true;
+
+        if( origin.equals( target ) ) {
+            List<Node> result = new ArrayList();
+            result.add( targetNode );
+            return result;
+        }
+        
         List<Node> open = new ArrayList();
         List<Node> closed = new ArrayList();
         
-        Node current = nodes[origin.x][origin.y];
-        open.add( current );
+        open.add( startNode );
         
         while( !open.isEmpty() ){
             Collections.sort( open, astarComparator );
-            current = open.remove( 0 );
-            closed.add( current );
+            Node currentNode = open.remove(0);
+            closed.add( currentNode );
             
-            if( current.target ){
-                //return
+            List<Node> adjacent = getAdjacentNodes( nodes, currentNode, allowDiagonal );
+            adjacent.removeAll( closed );
+            
+            for( Node adjacentNode : adjacent ){
+                double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
+                double heurCost = Vertex.distance( currentNode.location, adjacentNode.location );
+                double newCost = currentNode.cost + graphCost + heurCost;
+                
+                if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
+                    adjacentNode.cost = newCost;
+                    adjacentNode.previous = currentNode;
+                }
+                
+                if( !open.contains( adjacentNode ) ){
+                    open.add( adjacentNode );
+                }
+            }
+            
+            if( currentNode.target ){
+                return walkBackwards( currentNode );
             }
         }
         
@@ -293,15 +338,13 @@ public class Pathfinder {
     }
 
     /**
-     * Returns a list of nodes touching the current node.
-     *
+     * Returns a list of traversable nodes touching the current node.
      * @param nodes         the search space
      * @param current       the current node
      * @param allowDiagonal if true, the returned list may contain nodes
-     *                      reachable
-     *                      from current via diagonal movement; if false, the list
+     *                      reachable from current via diagonal movement; if false, the list
      *                      will only contain nodes reachable via single-axis movement.
-     * @return A list of nodes touching the current node.
+     * @return A list of traversable nodes touching the current node.
      */
     public static List<Node> getAdjacentNodes( Node[][] nodes, Node current, boolean allowDiagonal ) {
         Vertex[] candidates;
@@ -342,8 +385,7 @@ public class Pathfinder {
 
     /**
      * Clears out all nodes' "working" data, while leaving traversable,
-     * location,
-     * and matric location as found.
+     * location, and search space location as found.
      *
      * @param nodes the list of nodes
      */
@@ -352,8 +394,6 @@ public class Pathfinder {
             for( int row = 0; row < nodes[col].length; row++ ) {
                 Node node = nodes[col][row];
                 node.cost = -1;
-                node.origin = false;
-                node.target = false;
                 node.visited = false;
                 node.clear = false;
                 node.path = false;

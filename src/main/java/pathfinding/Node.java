@@ -1,5 +1,7 @@
 package pathfinding;
 
+import java.util.Objects;
+
 /**
  * A node in the search space used by the Pathfinder's algorithms.
  * 
@@ -30,7 +32,6 @@ public class Node {
     public boolean traversable = true;
     
     public double cost = -1; // the total cost of reaching this node
-    public double hocost = -1; //used during processor to store calculated heuristic cost
     public boolean visited; //used during processing to prevent loopback
     public boolean clear = false; //used when printing the final path
     public boolean path = false; //used to indicate final path
@@ -52,4 +53,30 @@ public class Node {
         this.origin = origin;
         this.target = target;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + Objects.hashCode( this.location );
+        return hash;
+    }
+
+    @Override
+    public boolean equals( Object obj ) {
+        if( this == obj ) {
+            return true;
+        }
+        if( obj == null ) {
+            return false;
+        }
+        if( getClass() != obj.getClass() ) {
+            return false;
+        }
+        final Node other = (Node)obj;
+        if( !Objects.equals( this.location, other.location ) ) {
+            return false;
+        }
+        return true;
+    }
+
 }
