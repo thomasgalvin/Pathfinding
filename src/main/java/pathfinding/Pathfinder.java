@@ -153,12 +153,28 @@ public class Pathfinder {
         return generic( nodes, origin, target, dijkstraCC, false, allowDiagonal );
     }
     
+    /**
+     * An implementation of Dijkstra's Shortest Path algorithm. The origin and
+     * target nodes must already be marked, or a null pointer exception will
+     * be thrown.
+     * @param nodes the search space
+     * @return A path from origin to target, or null if no such path exists.
+     */
     public static List<Node> dijkstra( Node[][] nodes ){
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
         return dijkstra( nodes, origin, target );
     }
     
+    /**
+     * An implementation of Dijkstra's Shortest Path algorithm. The origin and
+     * target nodes must already be marked, or a null pointer exception will
+     * be thrown.
+     * @param nodes the search space
+     * @param allowDiagonal if false, the path returned will contain no diagonal
+     *                      movements.
+     * @return A path from origin to target, or null if no such path exists.
+     */
     public static List<Node> dijkstra( Node[][] nodes, boolean allowDiagonal ){
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
@@ -198,8 +214,7 @@ public class Pathfinder {
      * @param target        the location at which the path ends (e.g.
      *                      nodes[target.x][target.y]
      * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If
-     *                      false, the path will contain no diagonal movements.
+     *                      movements. If false, the path will contain no diagonal movements.
      * @return The first path found from origin to target, or null if no such
      *         path exists.
      */
@@ -207,12 +222,30 @@ public class Pathfinder {
         return generic( nodes, origin, target, bestFirstCC, true, allowDiagonal );
     }
     
+    /**
+     * An implementation of a best-first heuristic algorithm. The origin and
+     * target nodes must already be marked, or a null pointer exception will
+     * be thrown.
+     * @param nodes the search space
+     * @return The first path found from origin to target, or null if no such
+     *         path exists.
+     */
     public static List<Node> bestFirst( Node[][] nodes ){
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
         return bestFirst( nodes, origin, target );
     }
     
+    /**
+     * An implementation of a best-first heuristic algorithm. The origin and
+     * target nodes must already be marked, or a null pointer exception will
+     * be thrown.
+     * @param nodes the search space
+     * @param allowDiagonal if true, the algorithm may contain diagonal
+     *                      movements. If false, the path will contain no diagonal movements.
+     * @return The first path found from origin to target, or null if no such
+     *         path exists.
+     */
     public static List<Node> bestFirst( Node[][] nodes, boolean allowDiagonal ){
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
