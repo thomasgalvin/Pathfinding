@@ -9,336 +9,192 @@ import org.slf4j.LoggerFactory;
 
 public class Pathfinder {
     private static final Logger logger = LoggerFactory.getLogger( Pathfinder.class );
-
-    private interface CostCalculator {
-        public double getCost( Node currentNode, Node adjacentNode, Node targetNode );
-
-    }
-
-    private static CostCalculator dijkstraCC = new CostCalculator() {
-        @Override
-        public double getCost( Node currentNode, Node adjacentNode, Node targetNode ) {
-            double currentCost = currentNode.cost;
-            double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
-            double newCost = currentCost + graphCost;
-            return newCost;
-        }
-    };
-
-    private static CostCalculator bestFirstCC = new CostCalculator() {
-        @Override
-        public double getCost( Node currentNode, Node adjacentNode, Node targetNode ) {
-            double currentCost = currentNode.cost;
-            double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
-            double heurCost = Vertex.distance( currentNode.location, adjacentNode.location );
-            double newCost = currentCost + graphCost + heurCost;
-            return newCost;
-        }
-    };
     
-    private static Comparator astarComparator = new Comparator(){
-        @Override
-        public int compare( Object o1, Object o2 ) {
-            Node node1 = (Node)o1;
-            Node node2 = (Node)o2;
-            
-            if( node2.cost < node1.cost ){
-                return 1;
-            }
-            else if( node2.cost > node1.cost ){
-                return -1;
-            }
-            else{
-                return 0;
-            }
-        }
-    };
-    
-    private static class Setup{
-        public Node startNode;
-        public Node targetNode;
-        public List<Node> result;
-
-        public Setup( Node startNode, Node targetNode, List<Node> result ) {
-            this.startNode = startNode;
-            this.targetNode = targetNode;
-            this.result = result;
-        }
-    }
-    
-    private static Setup setup( Node[][] nodes, Vertex origin, Vertex target ){
-        clear( nodes );
-
-        Node startNode = nodes[origin.x][origin.y];
-        startNode.origin = true;
-        startNode.visited = true;
-        startNode.cost = 0;
-
-        Node targetNode = nodes[target.x][target.y];
-        targetNode.target = true;
-
-        List<Node> result = null;
-        if( origin.equals( target ) ) {
-            result = new ArrayList();
-            result.add( targetNode );
-        }
-        
-        return new Setup( startNode, targetNode, result );
-    }
+    /// Best-First Algorithm ///
     
     /**
-     * Implements functionality common to several pathfinding algorithms, like
-     * Dijkstra's, Greedy Best First, and A*.
-     *
+     * An implementation of a best-first, heuristic pathfinding algorithm.
+     * 
+     * In general, this is the best-performing algorithm in Pathfinder. The
+     * most efficient use is to return fast and allow diagonal movements, 
+     * though return fast does not guarantee a lowest-cost path.
+     * 
+     * For more information on best-first search, see:
+     * https://en.wikipedia.org/wiki/Best-first_search
+     * 
      * @param nodes         The search space
-     * @param origin        the location at which the path starts (e.g.
+     * 
+     * @param origin        The location at which the path starts (e.g.
      *                      nodes[origin.x][origin.y]
-     * @param target        the location at which the path ends (e.g.
+     * 
+     * @param target        The location at which the path ends (e.g.
      *                      nodes[target.x][target.y]
-     * @param calculator    calculates the distance between two nodes
-     * @param returnFast    if true, returns as soon as any path from origin to
-     *                      target is found; this is faster, but does not 
-     *                      guarentee a lowest-cost path. If false, the result 
-     *                      will be exhaustive and guarentee a lowest-cost path,
-     *                      but the runtime may be significantly higher.
-     * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If false, the path will contain no 
-     *                      diagonal movements.
-     * @return A path from origin to target, or null if no such path exists.
+     * 
+     * @param returnFast    If true, the algorithm will return as soon as any
+     *                      valid path between origin and target is found. This
+     *                      may have a much faster execution time, but is not
+     *                      guaranteed to return a lowest-cost path.
+     * 
+     *                      If false, the algorithm will be exhaustive (all 
+     *                      reachable nodes will be visited and evaluated), 
+     *                      and the returned path is guaranteed to be equal to
+     *                      or lower in cost than any other valid path, but the
+     *                      execution time may be much higher.
+     * 
+     * @param allowDiagonal If true, the returned path may contain diagonal 
+     *                      movements. If false, the returned path will not
+     *                      contain diagonal movements.
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
      */
-    private static List<Node> generic( Node[][] nodes,
-                                       Vertex origin, Vertex target,
-                                       CostCalculator calculator,
-                                       boolean returnFast,
-                                       boolean allowDiagonal ) {
-        //logger.info( "Search from: " + origin + " to " + target );
-
-        Setup setup = setup( nodes, origin, target );
-        if( setup.result != null ){
-            return setup.result;
-        }
-
-        //print(nodes);
-        Node currentNode = setup.startNode;
-        Node targetNode = setup.targetNode;
-
-        while( currentNode != null ) {
-            //logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
-
-            List<Node> adjacent = getAdjacentNodes( nodes, currentNode, allowDiagonal );
-            for( Node adjacentNode : adjacent ) {
-                double newCost = calculator.getCost( currentNode, adjacentNode, targetNode );
-
-                if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
-                    adjacentNode.cost = newCost;
-                    adjacentNode.previous = currentNode;
-                }
-            }
-
-            currentNode.visited = true;
-
-            if( returnFast && targetNode.cost != -1 ) {
-                break;
-            }
-            else {
-                currentNode = getNextNode( nodes );
-            }
-
-            //print(nodes);
-        }
-
-        //print(nodes);
-        if( targetNode.cost != -1 ) {
-            return walkBackwards( targetNode );
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     * An implementation of Dijkstra's Shortest Path algorithm.
-     * This algorithm is exhaustive, and guarantees a lowest-cost path from
-     * origin to target, if a path exists. The path returned will have a cost
-     * equal to or less than any other path within the search space, but no
-     * particular path is guaranteed to be returned. The path may contain
-     * diagonals. This algorithm is deterministic, and will always return the 
-     * same path for the same inputs.
-     *
-     * @param nodes  The search space
-     * @param origin the location at which the path starts (e.g.
-     *               nodes[origin.x][origin.y]
-     * @param target the location at which the path ends (e.g.
-     *               nodes[target.x][target.y]
-     * @return A path from origin to target, or null if no such path exists.
-     */
-    public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target ) {
-        return dijkstra( nodes, origin, target, true );
+    public static List<Node> bestFirst( Node[][] nodes, Vertex origin, Vertex target, boolean returnFast, boolean allowDiagonal ) {
+        return genericSearch( nodes, origin, target, bestFirstCC, returnFast, allowDiagonal );
     }
     
     /**
-     * An implementation of Dijkstra's Shortest Path algorithm, which can be
-     * configured to disallow diagonal movement.
-     *
-     * @param nodes         The search space
-     * @param origin        the location at which the path starts (e.g.
-     *                      nodes[origin.x][origin.y]
-     * @param target        the location at which the path ends (e.g.
-     *                      nodes[target.x][target.y]
-     * @param allowDiagonal if false, the path returned will contain no diagonal
-     *                      movements.
-     * @return A lowest-cost path from origin to target, or null if no such path
-     *         exists.
-     */
-    public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
-        return generic( nodes, origin, target, dijkstraCC, false, allowDiagonal );
-    }
-    
-    /**
-     * An implementation of Dijkstra's Shortest Path algorithm. The origin and
-     * target nodes must already be marked, or a null pointer exception will
-     * be thrown.
-     * @param nodes the search space
-     * @return A path from origin to target, or null if no such path exists.
-     */
-    public static List<Node> dijkstra( Node[][] nodes ){
-        Vertex origin = findOrigin( nodes );
-        Vertex target = findTarget( nodes );
-        return dijkstra( nodes, origin, target );
-    }
-    
-    /**
-     * An implementation of Dijkstra's Shortest Path algorithm. The origin and
-     * target nodes must already be marked, or a null pointer exception will
-     * be thrown.
-     * @param nodes the search space
-     * @param allowDiagonal if false, the path returned will contain no diagonal
-     *                      movements.
-     * @return A path from origin to target, or null if no such path exists.
-     */
-    public static List<Node> dijkstra( Node[][] nodes, boolean allowDiagonal ){
-        Vertex origin = findOrigin( nodes );
-        Vertex target = findTarget( nodes );
-        return dijkstra( nodes, origin, target, allowDiagonal );
-    }
-
-    /**
-     * An implementation of a best-first heuristic algorithm, which uses
-     * straight-line distance to estimate the cost of a node, and returns as
-     * soon as any path from origin to target is found. This path is *not* guaranteed
-     * to be a lowest-cost path, but the execution time may be significantly
-     * faster than Dijkstra's algorithm. The path may contain diagonals. This algorithm
-     * is deterministic, and will always return the same path for the same
-     * inputs.
-     *
-     * @param nodes  The search space
-     * @param origin the location at which the path starts (e.g.
-     *               nodes[origin.x][origin.y]
-     * @param target the location at which the path ends (e.g.
-     *               nodes[target.x][target.y]
-     * @return The first path found from origin to target, or null if no such
-     *         path exists.
-     */
-    public static List<Node> bestFirst( Node[][] nodes, Vertex origin, Vertex target ) {
-        return bestFirst( nodes, origin, target, true );
-    }
-
-    /**
-     * An implementation of a best-first heuristic algorithm, which uses
-     * straight-line distance to estimate the cost of a node, returns as soon
-     * as any path from origin to target is found, and can be configured to
-     * disallow diagonal movement.
-     *
-     * @param nodes         The search space
-     * @param origin        the location at which the path starts (e.g.
-     *                      nodes[origin.x][origin.y]
-     * @param target        the location at which the path ends (e.g.
-     *                      nodes[target.x][target.y]
-     * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If false, the path will contain no diagonal movements.
-     * @return The first path found from origin to target, or null if no such
-     *         path exists.
-     */
-    public static List<Node> bestFirst( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
-        return generic( nodes, origin, target, bestFirstCC, true, allowDiagonal );
-    }
-    
-    /**
-     * An implementation of a best-first heuristic algorithm. The origin and
-     * target nodes must already be marked, or a null pointer exception will
-     * be thrown.
-     * @param nodes the search space
-     * @return The first path found from origin to target, or null if no such
-     *         path exists.
+     * Searches nodes to find origin and target, then calls bestFirst with
+     * returnFast = true and allowDiagonal = true.
+     * 
+     * @param nodes The search space
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
      */
     public static List<Node> bestFirst( Node[][] nodes ){
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
-        return bestFirst( nodes, origin, target );
+        return bestFirst( nodes, origin, target, true, true );
     }
     
     /**
-     * An implementation of a best-first heuristic algorithm. The origin and
-     * target nodes must already be marked, or a null pointer exception will
-     * be thrown.
-     * @param nodes the search space
-     * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If false, the path will contain no 
-     *                      diagonal movements.
-     * @return The first path found from origin to target, or null if no such
-     *         path exists.
+     * Calls bestFirst with returnFast = true and allowDiagonal = true.
+     * 
+     * @param nodes The search space
+     * 
+     * @param origin        The location at which the path starts (e.g.
+     *                      nodes[origin.x][origin.y]
+     * 
+     * @param target        The location at which the path ends (e.g.
+     *                      nodes[target.x][target.y]
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
      */
-    public static List<Node> bestFirst( Node[][] nodes, boolean allowDiagonal ){
+    public static List<Node> bestFirst( Node[][] nodes, Vertex origin, Vertex target ){
+        return bestFirst( nodes, origin, target, true, true );
+    }
+    
+    
+    /// Dijkstra's Algorithm ///
+    
+    /**
+     * An implementation of Dijkstra's shortest path algorithm.
+     * 
+     * In general, this algorithm is less performant than best-first, but
+     * more performant than A*.
+     * 
+     * For more information on this algorithm, see: 
+     * https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+     * 
+     * @param nodes         The search space
+     * 
+     * @param origin        The location at which the path starts (e.g.
+     *                      nodes[origin.x][origin.y]
+     * 
+     * @param target        The location at which the path ends (e.g.
+     *                      nodes[target.x][target.y]
+     * 
+     * @param returnFast    If true, the algorithm will return as soon as any
+     *                      valid path between origin and target is found. This
+     *                      may have a much faster execution time, but is not
+     *                      guaranteed to return a lowest-cost path.
+     * 
+     *                      If false, the algorithm will be exhaustive (all 
+     *                      reachable nodes will be visited and evaluated), 
+     *                      and the returned path is guaranteed to be equal to
+     *                      or lower in cost than any other valid path, but the
+     *                      execution time may be much higher.
+     * 
+     * @param allowDiagonal If true, the returned path may contain diagonal 
+     *                      movements. If false, the returned path will not
+     *                      contain diagonal movements.
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
+     */
+    public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target, boolean returnFast, boolean allowDiagonal ) {
+        return genericSearch( nodes, origin, target, dijkstraCC, returnFast, allowDiagonal );
+    }
+    
+    /**
+     * Searches nodes to find origin and target, then calls dijkstra with
+     * returnFast = false and allowDiagonal = true.
+     * 
+     * @param nodes The search space
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
+     */
+    public static List<Node> dijkstra( Node[][] nodes ){
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
-        return bestFirst( nodes, origin, target, allowDiagonal );
-    }
-    
-    public static List<Node> astar( Node[][] nodes ) {
-        return astar( nodes, true );
-    }
-
-    public static List<Node> astar( Node[][] nodes, boolean allowDiagonal ) {
-        Vertex origin = findOrigin( nodes );
-        Vertex target = findTarget( nodes );
-        return astar( nodes, origin, target, allowDiagonal );
-    }
-    
-    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ) {
-        return astar( nodes, origin, target, true );
+        return dijkstra( nodes, origin, target, false, true );
     }
     
     /**
-     * An implementation of the A* search algorithm. This implementation returns
-     * fast, meaning it may not result in a lowest-cost path.
-     * @param nodes the seatch space
-     * @param origin the origin
-     * @param target the target
-     * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If false, the path will contain no 
-     *                      diagonal movements.
-     * @return a valid path from origin to target, or null if no such path exists
+     * Calls dijkstra with returnFast = false and allowDiagonal = true.
+     * 
+     * @param nodes The search space
+     * 
+     * @param origin        The location at which the path starts (e.g.
+     *                      nodes[origin.x][origin.y]
+     * 
+     * @param target        The location at which the path ends (e.g.
+     *                      nodes[target.x][target.y]
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
      */
-    public static List<Node> astar( Node[][] nodes, 
-                                    Vertex origin, Vertex target, 
-                                    boolean allowDiagonal ) {
-        return astar( nodes, origin, target, true, allowDiagonal );
+    public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target ){
+        return dijkstra( nodes, origin, target, false, true );
     }
     
+    /// A* Algorithm ///
+    
     /**
-     * An implementation of the A* search algorithm.
-     * @param nodes the seatch space
-     * @param origin the origin
-     * @param target the target
-     * @param returnFast    if true, returns as soon as any path from origin to
-     *                      target is found; this is faster, but does not 
-     *                      guarentee a lowest-cost path. If false, the result 
-     *                      will be exhaustive and guarentee a lowest-cost path,
-     *                      but the runtime may be significantly higher.
-     * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If false, the path will contain no 
-     *                      diagonal movements.
-     * @return a valid path from origin to target, or null if no such path exists
+     * An implementation of the A* pathfinding algorithm. 
+     * 
+     * In general, this is the least performant algorithm in Pathfinder.
+     * 
+     * For more information on A*, see:
+     * https://en.wikipedia.org/wiki/A*_search_algorithm
+     * 
+     * @param nodes         The search space
+     * 
+     * @param origin        The location at which the path starts (e.g.
+     *                      nodes[origin.x][origin.y]
+     * 
+     * @param target        The location at which the path ends (e.g.
+     *                      nodes[target.x][target.y]
+     * 
+     * @param returnFast    If true, the algorithm will return as soon as any
+     *                      valid path between origin and target is found. This
+     *                      may have a much faster execution time, but is not
+     *                      guaranteed to return a lowest-cost path.
+     * 
+     *                      If false, the algorithm will be exhaustive (all 
+     *                      reachable nodes will be visited and evaluated), 
+     *                      and the returned path is guaranteed to be equal to
+     *                      or lower in cost than any other valid path, but the
+     *                      execution time may be much higher.
+     * 
+     * @param allowDiagonal If true, the returned path may contain diagonal 
+     *                      movements. If false, the returned path will not
+     *                      contain diagonal movements.
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
      */
     public static List<Node> astar( Node[][] nodes, 
                                     Vertex origin, Vertex target, 
@@ -390,14 +246,53 @@ public class Pathfinder {
             return null;
         }
     }
+    
+    /**
+     * Searches nodes to find origin and target, then calls astar with
+     * returnFast = true and allowDiagonal = true.
+     * 
+     * @param nodes The search space
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
+     */
+    public static List<Node> astar( Node[][] nodes ){
+        Vertex origin = findOrigin( nodes );
+        Vertex target = findTarget( nodes );
+        return astar( nodes, origin, target, true, true );
+    }
+    
+    /**
+     * Calls astar with returnFast = true and allowDiagonal = true.
+     * 
+     * @param nodes The search space
+     * 
+     * @param origin        The location at which the path starts (e.g.
+     *                      nodes[origin.x][origin.y]
+     * 
+     * @param target        The location at which the path ends (e.g.
+     *                      nodes[target.x][target.y]
+     * 
+     * @return              A valid path between origin and target, or null if
+     *                      no such path exists.
+     */
+    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target ){
+        return astar( nodes, origin, target, true, true );
+    }
+    
+    /// utilities ///
 
     /**
      * Returns a list of traversable nodes touching the current node.
+     * 
      * @param nodes         the search space
+     * 
      * @param current       the current node
+     * 
      * @param allowDiagonal if true, the returned list may contain nodes
      *                      reachable from current via diagonal movement; if false, the list
      *                      will only contain nodes reachable via single-axis movement.
+     * 
      * @return A list of traversable nodes touching the current node.
      */
     public static List<Node> getAdjacentNodes( Node[][] nodes, Node current, boolean allowDiagonal ) {
@@ -457,34 +352,10 @@ public class Pathfinder {
     }
 
     /**
-     * Finds the lowest-cost, traversable, unvisited node in the list. This is
-     * used to determine which branch to expand first.
-     *
-     * @param nodes the list of nodes
-     * @return the next node that should be expanded.
-     */
-    private static Node getNextNode( Node[][] nodes ) {
-        Node next = null;
-
-        for( int col = 0; col < nodes.length; col++ ) {
-            for( int row = 0; row < nodes[col].length; row++ ) {
-                Node node = nodes[col][row];
-
-                if( !node.visited && node.traversable && node.cost != -1 ) {
-                    if( next == null || next.cost > node.cost ) {
-                        next = node;
-                    }
-                }
-            }
-        }
-
-        return next;
-    }
-
-    /**
-     * Creates a list of nodes, using node.previous to walk the chain.
+     * Creates a list of nodes, using Node.previous to walk the chain.
      *
      * @param targetNode the last node in the chain
+     * 
      * @return a list of nodes, from origin to target (in that order), based
      *         upon each node's previous field.
      */
@@ -649,5 +520,187 @@ public class Pathfinder {
             }
         }
         return null;
+    }
+    
+    
+    
+    /// internal utilities ///
+    
+    private interface CostCalculator {
+        public double getCost( Node currentNode, Node adjacentNode, Node targetNode );
+
+    }
+    
+    private static class Setup{
+        public Node startNode;
+        public Node targetNode;
+        public List<Node> result;
+
+        public Setup( Node startNode, Node targetNode, List<Node> result ) {
+            this.startNode = startNode;
+            this.targetNode = targetNode;
+            this.result = result;
+        }
+    }
+    
+    private static CostCalculator bestFirstCC = new CostCalculator() {
+        @Override
+        public double getCost( Node currentNode, Node adjacentNode, Node targetNode ) {
+            double currentCost = currentNode.cost;
+            double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
+            double heurCost = Vertex.distance( currentNode.location, adjacentNode.location );
+            double newCost = currentCost + graphCost + heurCost;
+            return newCost;
+        }
+    };
+    
+    private static CostCalculator dijkstraCC = new CostCalculator() {
+        @Override
+        public double getCost( Node currentNode, Node adjacentNode, Node targetNode ) {
+            double currentCost = currentNode.cost;
+            double graphCost = Vertex.distance( currentNode.location, adjacentNode.location );
+            double newCost = currentCost + graphCost;
+            return newCost;
+        }
+    };
+    
+    private static Comparator astarComparator = new Comparator(){
+        @Override
+        public int compare( Object o1, Object o2 ) {
+            Node node1 = (Node)o1;
+            Node node2 = (Node)o2;
+            
+            if( node2.cost < node1.cost ){
+                return 1;
+            }
+            else if( node2.cost > node1.cost ){
+                return -1;
+            }
+            else{
+                return 0;
+            }
+        }
+    };
+    
+    /**
+     * Implements functionality common to several pathfinding algorithms, such
+     * as Dijkstra's and the Greedy Best First Heuristic algorithm.
+     *
+     * @param nodes         The search space
+     * 
+     * @param origin        the location at which the path starts (e.g.
+     *                      nodes[origin.x][origin.y]
+     * 
+     * @param target        the location at which the path ends (e.g.
+     *                      nodes[target.x][target.y]
+     * 
+     * @param calculator    calculates the distance between two nodes
+     * 
+     * @param returnFast    if true, returns as soon as any path from origin to
+     *                      target is found; this is computationally faster, 
+     *                      but does not guarantee a lowest-cost path. 
+     * 
+     *                      If false, the search will be exhaustive and guarantee 
+     *                      a lowest-cost path, but the run time may be 
+     *                      significantly higher.
+     * @param allowDiagonal if true, the returned path may contain diagonal
+     *                      movements. If false, the path will contain no 
+     *                      diagonal movements.
+     * 
+     * @return A path from origin to target, or null if no such path exists.
+     */
+    private static List<Node> genericSearch( Node[][] nodes,
+                                             Vertex origin, Vertex target,
+                                             CostCalculator calculator,
+                                             boolean returnFast,
+                                             boolean allowDiagonal ) {
+        //logger.info( "Search from: " + origin + " to " + target );
+
+        Setup setup = setup( nodes, origin, target );
+        if( setup.result != null ){
+            return setup.result;
+        }
+
+        //print(nodes);
+        Node currentNode = setup.startNode;
+        Node targetNode = setup.targetNode;
+
+        while( currentNode != null ) {
+            //logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
+
+            List<Node> adjacent = getAdjacentNodes( nodes, currentNode, allowDiagonal );
+            for( Node adjacentNode : adjacent ) {
+                double newCost = calculator.getCost( currentNode, adjacentNode, targetNode );
+
+                if( adjacentNode.cost == -1 || adjacentNode.cost > newCost ) {
+                    adjacentNode.cost = newCost;
+                    adjacentNode.previous = currentNode;
+                }
+            }
+
+            currentNode.visited = true;
+
+            if( returnFast && targetNode.cost != -1 ) {
+                break;
+            }
+            else {
+                currentNode = getNextNode( nodes );
+            }
+
+            //print(nodes);
+        }
+
+        //print(nodes);
+        if( targetNode.cost != -1 ) {
+            return walkBackwards( targetNode );
+        }
+        else {
+            return null;
+        }
+    }
+    
+    private static Setup setup( Node[][] nodes, Vertex origin, Vertex target ){
+        clear( nodes );
+
+        Node startNode = nodes[origin.x][origin.y];
+        startNode.origin = true;
+        startNode.visited = true;
+        startNode.cost = 0;
+
+        Node targetNode = nodes[target.x][target.y];
+        targetNode.target = true;
+
+        List<Node> result = null;
+        if( origin.equals( target ) ) {
+            result = new ArrayList();
+            result.add( targetNode );
+        }
+        
+        return new Setup( startNode, targetNode, result );
+    }
+    
+    /**
+     * Finds the lowest-cost, traversable, unvisited node in the list. This is
+     * used to determine which branch to expand first.
+     *
+     * @param nodes the list of nodes
+     * @return the next node that should be expanded.
+     */
+    private static Node getNextNode( Node[][] nodes ) {
+        Node next = null;
+
+        for( int col = 0; col < nodes.length; col++ ) {
+            for( int row = 0; row < nodes[col].length; row++ ) {
+                Node node = nodes[col][row];
+
+                if( !node.visited && node.traversable && node.cost != -1 ) {
+                    if( next == null || next.cost > node.cost ) {
+                        next = node;
+                    }
+                }
+            }
+        }
+
+        return next;
     }
 }

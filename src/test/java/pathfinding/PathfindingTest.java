@@ -79,7 +79,7 @@ public class PathfindingTest {
         long dTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
-        List<Node> dijkstraNoDiag = Pathfinder.dijkstra(nodes, start, end, false );
+        List<Node> dijkstraNoDiag = Pathfinder.dijkstra(nodes, start, end, false, false );
         int dndsize = dijkstraNoDiag == null ? -1 : dijkstraNoDiag.size();
         endTime = System.currentTimeMillis();
         long dndTime = (endTime - startTime);
@@ -91,7 +91,7 @@ public class PathfindingTest {
         long bfTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
-        List<Node> bfNoDiag = Pathfinder.bestFirst(nodes, start, end, false );
+        List<Node> bfNoDiag = Pathfinder.bestFirst(nodes, start, end, true, false );
         int bfndsize = bfNoDiag == null ? -1 : bfNoDiag.size();
         endTime = System.currentTimeMillis();
         long bfndTime = (endTime - startTime);
@@ -103,7 +103,7 @@ public class PathfindingTest {
         long astarTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
-        List<Node> astarnd = Pathfinder.astar(nodes, start, end, false );
+        List<Node> astarnd = Pathfinder.astar(nodes, start, end, true, false );
         int astarndsize = astarnd == null ? -1 : astarnd.size();
         endTime = System.currentTimeMillis();
         long astarndTime = (endTime - startTime);
