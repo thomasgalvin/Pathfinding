@@ -211,21 +211,21 @@ public class Pathfinder {
 
         if( allowDiagonal ) {
             candidates = new Vertex[]{
-                new Vertex( current.matrixLocation.x + 1, current.matrixLocation.y ),
-                new Vertex( current.matrixLocation.x + 1, current.matrixLocation.y + 1 ),
-                new Vertex( current.matrixLocation.x + 1, current.matrixLocation.y - 1 ),
-                new Vertex( current.matrixLocation.x, current.matrixLocation.y + 1 ),
-                new Vertex( current.matrixLocation.x, current.matrixLocation.y - 1 ),
-                new Vertex( current.matrixLocation.x - 1, current.matrixLocation.y ),
-                new Vertex( current.matrixLocation.x - 1, current.matrixLocation.y + 1 ),
-                new Vertex( current.matrixLocation.x - 1, current.matrixLocation.y - 1 ), };
+                new Vertex( current.searchSpaceLocation.x + 1, current.searchSpaceLocation.y ),
+                new Vertex( current.searchSpaceLocation.x + 1, current.searchSpaceLocation.y + 1 ),
+                new Vertex( current.searchSpaceLocation.x + 1, current.searchSpaceLocation.y - 1 ),
+                new Vertex( current.searchSpaceLocation.x, current.searchSpaceLocation.y + 1 ),
+                new Vertex( current.searchSpaceLocation.x, current.searchSpaceLocation.y - 1 ),
+                new Vertex( current.searchSpaceLocation.x - 1, current.searchSpaceLocation.y ),
+                new Vertex( current.searchSpaceLocation.x - 1, current.searchSpaceLocation.y + 1 ),
+                new Vertex( current.searchSpaceLocation.x - 1, current.searchSpaceLocation.y - 1 ), };
         }
         else {
             candidates = new Vertex[]{
-                new Vertex( current.matrixLocation.x + 1, current.matrixLocation.y ),
-                new Vertex( current.matrixLocation.x, current.matrixLocation.y + 1 ),
-                new Vertex( current.matrixLocation.x, current.matrixLocation.y - 1 ),
-                new Vertex( current.matrixLocation.x - 1, current.matrixLocation.y ), };
+                new Vertex( current.searchSpaceLocation.x + 1, current.searchSpaceLocation.y ),
+                new Vertex( current.searchSpaceLocation.x, current.searchSpaceLocation.y + 1 ),
+                new Vertex( current.searchSpaceLocation.x, current.searchSpaceLocation.y - 1 ),
+                new Vertex( current.searchSpaceLocation.x - 1, current.searchSpaceLocation.y ), };
         }
 
         List<Node> result = new ArrayList( candidates.length );

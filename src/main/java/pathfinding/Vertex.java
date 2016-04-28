@@ -1,5 +1,8 @@
 package pathfinding;
 
+/**
+ * Represents a point in 2D space.
+ */
 public class Vertex
 {
     public final int x, y;
@@ -51,14 +54,33 @@ public class Vertex
         return "Vertext[" + x + "," + y + "]";
     }
     
+    /**
+     * Calculates the distance between this point and the target.
+     * @param vertex the target
+     * @return the distance between this point and the target
+     */
     public double distance( Vertex vertex ){
         return distance( this.x, this.y, vertex.x, vertex.y );
     }
     
+    /**
+     * Calculates the distance between two vertices.
+     * @param one the first vertex
+     * @param two the second vertex
+     * @return the distance between the two
+     */
     public static double distance( Vertex one, Vertex two ){
         return distance( one.x, one.y, two.x, two.y );
     }
     
+    /**
+     * Calculates the distance between two points (x1,y1) and (x2,y2)
+     * @param x1 the first x coordinate
+     * @param y1 the first y coordinate
+     * @param x2 the second x coordinate
+     * @param y2 the second y coordinate
+     * @return the distance between the two points
+     */
     public static double distance( int x1, int y1, int x2, int y2 ){
         double xx = x1 - x2;
         double yy = y1 - y2;
