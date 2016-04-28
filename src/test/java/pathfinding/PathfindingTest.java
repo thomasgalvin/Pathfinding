@@ -33,21 +33,25 @@ public class PathfindingTest {
     }
 
     public static Node[][] makeNodes() {
-        int multiplier = 5;
         int width = 10;
         int height = 10;
+        int matrixStartX = 0;
+        int matrixStartY = 0;
+        int stepX = 10;
+        int stepY = 10;
+        return Pathfinder.makeNodes( width, height, matrixStartX, matrixStartY, stepX, stepY );
         
-        Node[][] nodes = new Node[ width ][ height ];
-        for( int x = 0; x < width; x++ ){
-            for( int y = 0; y < height; y++ ){
-                int xx = x * multiplier;
-                int yy = y * multiplier;
-                Node node = new Node(xx, yy, x, y);
-                nodes[x][y] = node;
-            }
-        }
-        
-        return nodes;
+//        Node[][] nodes = new Node[ width ][ height ];
+//        for( int x = 0; x < width; x++ ){
+//            for( int y = 0; y < height; y++ ){
+//                int xx = x * multiplier;
+//                int yy = y * multiplier;
+//                Node node = new Node(xx, yy, x, y);
+//                nodes[x][y] = node;
+//            }
+//        }
+//        
+//        return nodes;
     }
 
     @Test
@@ -97,7 +101,7 @@ public class PathfindingTest {
         logger.info( "Best First length:                " + astar.size() );
         logger.info( "Dijkstra time:                    " + dTime + " ms" );
         logger.info( "Best First time:                  " + bfTime + " ms" );
-        
+        logger.info( "---" );
         logger.info( "Dijkstra (no diagonals)" );
         Pathfinder.printPath( nodes, dijkstraNoDiag );
         logger.info( "Best First (no diagonals)" );
@@ -107,7 +111,7 @@ public class PathfindingTest {
         logger.info( "Best First length:                " + astarNoDiag.size() );
         logger.info( "Dijkstra time:                    " + dndTime + " ms" );
         logger.info( "Best First time:                  " + bfndTime + " ms" );
-        logger.info( "" );
+        logger.info( "\n\n\n" );
     }
     
     @Test
