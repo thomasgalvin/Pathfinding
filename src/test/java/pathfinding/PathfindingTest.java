@@ -82,9 +82,11 @@ public class PathfindingTest {
 //        Pathfinder.printPath( nodes, dijkstra );
 //        logger.info( "A*" );
 //        Pathfinder.printPath( nodes, astar );
-        logger.info( "Same solution:         " + dijkstra.equals( astar ) );
-        logger.info( "Dijkstra time:         " + dTime + " ms" );
-        logger.info( "Best First time :      " + bfTime + " ms" );
+        logger.info( "Same solution:      " + dijkstra.equals( astar ) );
+        logger.info( "Dijkstra length:    " + dijkstra.size() );
+        logger.info( "Best First length:  " + astar.size() );
+        logger.info( "Dijkstra time:      " + dTime + " ms" );
+        logger.info( "Best First time:    " + bfTime + " ms" );
         logger.info( "" );
     }
     
