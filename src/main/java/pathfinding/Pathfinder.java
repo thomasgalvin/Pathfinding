@@ -97,13 +97,13 @@ public class Pathfinder {
      *                      nodes[target.x][target.y]
      * @param calculator    calculates the distance between two nodes
      * @param returnFast    if true, returns as soon as any path from origin to
-     *                      target is found;
-     *                      this is faster, but does not guarentee a lowest-cost path. If false,
-     *                      the result will be exhaustive and guarentee a lowest-cost path, but
-     *                      the runtime may be significantly higher.
+     *                      target is found; this is faster, but does not 
+     *                      guarentee a lowest-cost path. If false, the result 
+     *                      will be exhaustive and guarentee a lowest-cost path,
+     *                      but the runtime may be significantly higher.
      * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If
-     *                      false, the path will contain no diagonal movements.
+     *                      movements. If false, the path will contain no 
+     *                      diagonal movements.
      * @return A path from origin to target, or null if no such path exists.
      */
     private static List<Node> generic( Node[][] nodes,
@@ -283,7 +283,8 @@ public class Pathfinder {
      * be thrown.
      * @param nodes the search space
      * @param allowDiagonal if true, the algorithm may contain diagonal
-     *                      movements. If false, the path will contain no diagonal movements.
+     *                      movements. If false, the path will contain no 
+     *                      diagonal movements.
      * @return The first path found from origin to target, or null if no such
      *         path exists.
      */
@@ -296,7 +297,7 @@ public class Pathfinder {
     public static List<Node> astar( Node[][] nodes ) {
         return astar( nodes, true );
     }
-    
+
     public static List<Node> astar( Node[][] nodes, boolean allowDiagonal ) {
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
@@ -307,7 +308,42 @@ public class Pathfinder {
         return astar( nodes, origin, target, true );
     }
     
-    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
+    /**
+     * An implementation of the A* search algorithm. This implementation returns
+     * fast, meaning it may not result in a lowest-cost path.
+     * @param nodes the seatch space
+     * @param origin the origin
+     * @param target the target
+     * @param allowDiagonal if true, the algorithm may contain diagonal
+     *                      movements. If false, the path will contain no 
+     *                      diagonal movements.
+     * @return a valid path from origin to target, or null if no such path exists
+     */
+    public static List<Node> astar( Node[][] nodes, 
+                                    Vertex origin, Vertex target, 
+                                    boolean allowDiagonal ) {
+        return astar( nodes, origin, target, true, allowDiagonal );
+    }
+    
+    /**
+     * An implementation of the A* search algorithm.
+     * @param nodes the seatch space
+     * @param origin the origin
+     * @param target the target
+     * @param returnFast    if true, returns as soon as any path from origin to
+     *                      target is found; this is faster, but does not 
+     *                      guarentee a lowest-cost path. If false, the result 
+     *                      will be exhaustive and guarentee a lowest-cost path,
+     *                      but the runtime may be significantly higher.
+     * @param allowDiagonal if true, the algorithm may contain diagonal
+     *                      movements. If false, the path will contain no 
+     *                      diagonal movements.
+     * @return a valid path from origin to target, or null if no such path exists
+     */
+    public static List<Node> astar( Node[][] nodes, 
+                                    Vertex origin, Vertex target, 
+                                    boolean returnFast,
+                                    boolean allowDiagonal ) {
         Setup setup = setup( nodes, origin, target );
         if( setup.result != null ){
             return setup.result;
@@ -317,6 +353,7 @@ public class Pathfinder {
         List<Node> closed = new ArrayList();
         
         open.add( setup.startNode );
+        Node targetNode = setup.targetNode;
         
         while( !open.isEmpty() ){
             Collections.sort( open, astarComparator );
@@ -341,12 +378,17 @@ public class Pathfinder {
                 }
             }
             
-            if( currentNode.target ){
+            if( returnFast && currentNode.target ){
                 return walkBackwards( currentNode );
             }
         }
         
-        return null;
+        if( targetNode.cost != -1 ) {
+            return walkBackwards( targetNode );
+        }
+        else {
+            return null;
+        }
     }
 
     /**
