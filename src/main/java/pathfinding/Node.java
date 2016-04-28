@@ -29,7 +29,8 @@ public class Node {
     public boolean target = false;
     public boolean traversable = true;
     
-    public double cost = -1;
+    public double cost = -1; // the total cost of reaching this node
+    public double hocost = -1; //used during processor to store calculated heuristic cost
     public boolean visited; //used during processing to prevent loopback
     public boolean clear = false; //used when printing the final path
     public boolean path = false; //used to indicate final path

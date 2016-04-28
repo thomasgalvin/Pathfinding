@@ -74,43 +74,63 @@ public class PathfindingTest {
     private static void runTest( Node[][] nodes, Vertex start, Vertex end ) throws Exception{
         long startTime = System.currentTimeMillis();
         List<Node> dijkstra = Pathfinder.dijkstra(nodes, start, end );
+        int dsize = dijkstra == null ? -1 : dijkstra.size();
         long endTime = System.currentTimeMillis();
         long dTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
         List<Node> dijkstraNoDiag = Pathfinder.dijkstra(nodes, start, end, false );
+        int dndsize = dijkstraNoDiag == null ? -1 : dijkstraNoDiag.size();
         endTime = System.currentTimeMillis();
         long dndTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
-        List<Node> astar = Pathfinder.bestFirst(nodes, start, end );
+        List<Node> bf = Pathfinder.bestFirst(nodes, start, end );
+        int bfsize = bf == null ? -1 : bf.size();
         endTime = System.currentTimeMillis();
         long bfTime = (endTime - startTime);
         
         startTime = System.currentTimeMillis();
-        List<Node> astarNoDiag = Pathfinder.bestFirst(nodes, start, end, false );
+        List<Node> bfNoDiag = Pathfinder.bestFirst(nodes, start, end, false );
+        int bfndsize = bfNoDiag == null ? -1 : bfNoDiag.size();
         endTime = System.currentTimeMillis();
         long bfndTime = (endTime - startTime);
         
-        logger.info( "Dijkstra (diagonals allowed)" );
-        Pathfinder.printPath( nodes, dijkstra );
-        logger.info( "Best First (diagonals allowed)" );
-        Pathfinder.printPath( nodes, astar );
-        logger.info( "Same solution (diagonals):        " + dijkstra.equals( astar ) );
-        logger.info( "Dijkstra length:                  " + dijkstra.size() );
-        logger.info( "Best First length:                " + astar.size() );
+        startTime = System.currentTimeMillis();
+        List<Node> astar = Pathfinder.astar(nodes, start, end, true );
+        int astarsize = astar == null ? -1 : astar.size();
+        endTime = System.currentTimeMillis();
+        long astarTime = (endTime - startTime);
+        
+        startTime = System.currentTimeMillis();
+        List<Node> astarnd = Pathfinder.astar(nodes, start, end, false );
+        int astarndsize = astarnd == null ? -1 : astar.size();
+        endTime = System.currentTimeMillis();
+        long astarndTime = (endTime - startTime);
+        
+        logger.info( "Diagonals allowed" );
+//        logger.info( "Dijkstra (diagonals allowed)" );
+//        Pathfinder.printPath( nodes, dijkstra );
+//        logger.info( "Best First (diagonals allowed)" );
+//        Pathfinder.printPath( nodes, bf );
+        logger.info( "Dijkstra length:                  " + dsize );
+        logger.info( "Best First length:                " + bfsize );
+        logger.info( "A* length:                        " + astarsize );
         logger.info( "Dijkstra time:                    " + dTime + " ms" );
         logger.info( "Best First time:                  " + bfTime + " ms" );
-        logger.info( "---" );
-        logger.info( "Dijkstra (no diagonals)" );
-        Pathfinder.printPath( nodes, dijkstraNoDiag );
-        logger.info( "Best First (no diagonals)" );
-        Pathfinder.printPath( nodes, astarNoDiag );
-        logger.info( "Same solution (no diagonals):     " + dijkstraNoDiag.equals( astarNoDiag ) );
-        logger.info( "Dijkstra length:                  " + dijkstraNoDiag.size() );
-        logger.info( "Best First length:                " + astarNoDiag.size() );
-        logger.info( "Dijkstra time:                    " + dndTime + " ms" );
-        logger.info( "Best First time:                  " + bfndTime + " ms" );
+        logger.info( "A* time:                          " + astarTime + " ms" );
+//        logger.info( "---" );
+//        logger.info( "No diagonals:" );
+//        logger.info( "Dijkstra (no diagonals)" );
+//        Pathfinder.printPath( nodes, dijkstraNoDiag );
+//        logger.info( "Best First (no diagonals)" );
+//        Pathfinder.printPath( nodes, bfNoDiag );
+//        logger.info( "Dijkstra length:                  " + dndsize );
+//        logger.info( "Best First length:                " + bfndsize );
+//        logger.info( "A* length:                        " + astarndsize );
+//        logger.info( "Dijkstra time:                    " + dndTime + " ms" );
+//        logger.info( "Best First time:                  " + bfndTime + " ms" );
+//        logger.info( "A* time:                          " + astarndTime + " ms" );
         logger.info( "\n\n\n" );
     }
     

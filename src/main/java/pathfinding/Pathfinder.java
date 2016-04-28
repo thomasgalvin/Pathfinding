@@ -2,9 +2,11 @@ package pathfinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Pathfinder {
     private static final Logger logger = LoggerFactory.getLogger( Pathfinder.class );
@@ -34,7 +36,25 @@ public class Pathfinder {
             return newCost;
         }
     };
-
+    
+    private static Comparator astarComparator = new Comparator(){
+        @Override
+        public int compare( Object o1, Object o2 ) {
+            Node node1 = (Node)o1;
+            Node node2 = (Node)o2;
+            
+            if( node2.cost < node1.cost ){
+                return 1;
+            }
+            else if( node2.cost > node1.cost ){
+                return -1;
+            }
+            else{
+                return 0;
+            }
+        }
+    };
+    
     /**
      * Implements functionality common to several pathfinding algorithms, like
      * Dijkstra's, Greedy Best First, and A*.
@@ -250,6 +270,26 @@ public class Pathfinder {
         Vertex origin = findOrigin( nodes );
         Vertex target = findTarget( nodes );
         return bestFirst( nodes, origin, target, allowDiagonal );
+    }
+    
+    public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
+        List<Node> open = new ArrayList();
+        List<Node> closed = new ArrayList();
+        
+        Node current = nodes[origin.x][origin.y];
+        open.add( current );
+        
+        while( !open.isEmpty() ){
+            Collections.sort( open, astarComparator );
+            current = open.remove( 0 );
+            closed.add( current );
+            
+            if( current.target ){
+                //return
+            }
+        }
+        
+        return null;
     }
 
     /**
