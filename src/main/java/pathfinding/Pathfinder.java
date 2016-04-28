@@ -54,6 +54,38 @@ public class Pathfinder {
         }
     };
     
+    private static class Setup{
+        public Node startNode;
+        public Node targetNode;
+        public List<Node> result;
+
+        public Setup( Node startNode, Node targetNode, List<Node> result ) {
+            this.startNode = startNode;
+            this.targetNode = targetNode;
+            this.result = result;
+        }
+    }
+    
+    private static Setup setup( Node[][] nodes, Vertex origin, Vertex target ){
+        clear( nodes );
+
+        Node startNode = nodes[origin.x][origin.y];
+        startNode.origin = true;
+        startNode.visited = true;
+        startNode.cost = 0;
+
+        Node targetNode = nodes[target.x][target.y];
+        targetNode.target = true;
+
+        List<Node> result = null;
+        if( origin.equals( target ) ) {
+            result = new ArrayList();
+            result.add( targetNode );
+        }
+        
+        return new Setup( startNode, targetNode, result );
+    }
+    
     /**
      * Implements functionality common to several pathfinding algorithms, like
      * Dijkstra's, Greedy Best First, and A*.
@@ -81,24 +113,14 @@ public class Pathfinder {
                                        boolean allowDiagonal ) {
         //logger.info( "Search from: " + origin + " to " + target );
 
-        clear( nodes );
-
-        Node startNode = nodes[origin.x][origin.y];
-        startNode.origin = true;
-        startNode.visited = true;
-        startNode.cost = 0;
-
-        Node targetNode = nodes[target.x][target.y];
-        targetNode.target = true;
-
-        if( origin.equals( target ) ) {
-            List<Node> result = new ArrayList();
-            result.add( targetNode );
-            return result;
+        Setup setup = setup( nodes, origin, target );
+        if( setup.result != null ){
+            return setup.result;
         }
 
         //print(nodes);
-        Node currentNode = startNode;
+        Node currentNode = setup.startNode;
+        Node targetNode = setup.targetNode;
 
         while( currentNode != null ) {
             //logger.info( "currentNode: row: " + currentNode.matrixLocation.y + " col: " + currentNode.matrixLocation.x );
@@ -286,25 +308,15 @@ public class Pathfinder {
     }
     
     public static List<Node> astar( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
-        clear( nodes );
-
-        Node startNode = nodes[origin.x][origin.y];
-        startNode.origin = true;
-        startNode.cost = 0;
-
-        Node targetNode = nodes[target.x][target.y];
-        targetNode.target = true;
-
-        if( origin.equals( target ) ) {
-            List<Node> result = new ArrayList();
-            result.add( targetNode );
-            return result;
+        Setup setup = setup( nodes, origin, target );
+        if( setup.result != null ){
+            return setup.result;
         }
         
         List<Node> open = new ArrayList();
         List<Node> closed = new ArrayList();
         
-        open.add( startNode );
+        open.add( setup.startNode );
         
         while( !open.isEmpty() ){
             Collections.sort( open, astarComparator );
