@@ -85,11 +85,6 @@ public class Vertex
         double xx = x1 - x2;
         double yy = y1 - y2;
             
-        xx *= xx;
-        yy *= yy;
-        
-        double z = xx + yy;
-        double result = Math.sqrt( z );
-        return result;
+        return Math.sqrt( xx * xx + yy * yy );
     }
 }
