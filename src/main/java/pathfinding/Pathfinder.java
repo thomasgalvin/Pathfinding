@@ -134,7 +134,7 @@ public class Pathfinder {
     public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target ) {
         return dijkstra( nodes, origin, target, true );
     }
-
+    
     /**
      * An implementation of Dijkstra's Shortest Path algorithm, which can be
      * configured to disallow diagonal movement.
@@ -151,6 +151,18 @@ public class Pathfinder {
      */
     public static List<Node> dijkstra( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
         return generic( nodes, origin, target, dijkstraCC, false, allowDiagonal );
+    }
+    
+    public static List<Node> dijkstra( Node[][] nodes ){
+        Vertex origin = findOrigin( nodes );
+        Vertex target = findTarget( nodes );
+        return dijkstra( nodes, origin, target );
+    }
+    
+    public static List<Node> dijkstra( Node[][] nodes, boolean allowDiagonal ){
+        Vertex origin = findOrigin( nodes );
+        Vertex target = findTarget( nodes );
+        return dijkstra( nodes, origin, target, allowDiagonal );
     }
 
     /**
@@ -193,6 +205,18 @@ public class Pathfinder {
      */
     public static List<Node> bestFirst( Node[][] nodes, Vertex origin, Vertex target, boolean allowDiagonal ) {
         return generic( nodes, origin, target, bestFirstCC, true, allowDiagonal );
+    }
+    
+    public static List<Node> bestFirst( Node[][] nodes ){
+        Vertex origin = findOrigin( nodes );
+        Vertex target = findTarget( nodes );
+        return bestFirst( nodes, origin, target );
+    }
+    
+    public static List<Node> bestFirst( Node[][] nodes, boolean allowDiagonal ){
+        Vertex origin = findOrigin( nodes );
+        Vertex target = findTarget( nodes );
+        return bestFirst( nodes, origin, target, allowDiagonal );
     }
 
     /**
@@ -438,4 +462,25 @@ public class Pathfinder {
         return nodes;
     }
 
+    public static Vertex findOrigin( Node[][] nodes ){
+        for( int x = 0; x < nodes.length; x++ ){
+            for( int y = 0; y < nodes.length; y++ ){
+                if( nodes[x][y].origin ){
+                    return new Vertex(x,y);
+                }
+            }
+        }
+        return null;
+    }
+    
+    public static Vertex findTarget( Node[][] nodes ){
+        for( int x = 0; x < nodes.length; x++ ){
+            for( int y = 0; y < nodes.length; y++ ){
+                if( nodes[x][y].target ){
+                    return new Vertex(x,y);
+                }
+            }
+        }
+        return null;
+    }
 }
